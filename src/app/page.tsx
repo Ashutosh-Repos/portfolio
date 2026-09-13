@@ -1,69 +1,126 @@
-import Image from "next/image";
+import { About } from '@/components/about/About';
+import { Container } from '@/components/liquid/Container';
+import { Experience } from '@/components/experience/experience';
+import { DeveloperStats } from '@/components/DeveloperStats';
+import { Projects } from '@/components/projects/Projects';
+import { Writings } from '@/components/Writings/writing';
+import { PaperShelf } from '@/components/Writings/papershelf';
+import { Blogs } from '@/components/Writings/blogs';
+import { GLASS_OPTICS } from '@/lib/glass-config';
+import { experienceService } from '@/platform/modules/experience/experience.service';
+import { writingService } from '@/platform/modules/writing/writing.service';
+import { blogService } from '@/platform/modules/blogs/blog.service';
 
-export default function Home() {
+export default async function Home() {
+  const [experiences, blogsResult, essaysResult, papersResult] = await Promise.all([
+    experienceService.getExperiences().catch(() => []),
+    blogService.getBlogs({ limit: 10 }).catch(() => ({ items: [] })),
+    writingService.getWritings({ type: 'essay', limit: 10 }).catch(() => ({ items: [] })),
+    writingService.getWritings({ type: 'research_paper', limit: 10 }).catch(() => ({ items: [] })),
+  ]);
+
+  const mappedCompanies = experiences.map((exp) => ({
+    name: exp.company,
+    role: exp.role,
+    logo: exp.logoUrl || '/images/inamigossq.jpg',
+    url: exp.companyUrl || undefined,
+    description: exp.description || undefined,
+  }));
+
+  const formatWritingDate = (ts: number | null) => {
+    if (!ts) return '10/July/2003';
+    const d = new Date(ts);
+    return `${d.getDate()}/${d.toLocaleString('en-US', { month: 'short' })}/${d.getFullYear()}`;
+  };
+
+  const mappedBlogs = blogsResult.items.map((w) => ({
+    title: w.title,
+    date: formatWritingDate(w.publishedAt),
+    slug: w.slug,
+  }));
+
+  const mappedEssays = essaysResult.items.map((w) => ({
+    title: w.title,
+    date: formatWritingDate(w.publishedAt),
+    slug: w.slug,
+  }));
+
+  const mappedPapers = papersResult.items.map((w) => ({
+    title: w.title,
+    date: formatWritingDate(w.publishedAt),
+    slug: w.slug,
+  }));
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="w-full flex flex-col min-[890px]:grid min-[890px]:grid-cols-3 gap-6 items-start">
+      {/* Left Column (2 of 3 cols on desktop): About, Developer Stats, Projects & Blogs */}
+      <div className="contents min-[890px]:flex min-[890px]:flex-col min-[890px]:col-span-2 min-[890px]:gap-6 min-[890px]:w-full">
+        <div className="order-1 min-[890px]:order-0 w-full">
+          <Container
+            className="p-6 sm:p-7 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            radius={36}
+            optics={GLASS_OPTICS}
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <About />
+          </Container>
         </div>
-      </main>
+
+        <div className="order-3 min-[890px]:order-0 w-full">
+          <DeveloperStats />
+        </div>
+
+        <div className="order-4 min-[890px]:order-0 w-full">
+          <Container
+            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            radius={36}
+            optics={GLASS_OPTICS}
+          >
+            <Projects />
+          </Container>
+        </div>
+
+        <div className="order-5 min-[890px]:order-0 w-full">
+          <Container
+            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            radius={36}
+            optics={GLASS_OPTICS}
+          >
+            <Blogs items={mappedBlogs.length > 0 ? mappedBlogs : undefined} />
+          </Container>
+        </div>
+      </div>
+
+      {/* Right Column (1 of 3 cols on desktop): Experience & Writings */}
+      <div className="contents min-[890px]:flex min-[890px]:flex-col min-[890px]:col-span-1 min-[890px]:gap-6 min-[890px]:w-full">
+        <div className="order-2 min-[890px]:order-0 w-full">
+          <Container
+            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            radius={36}
+            optics={GLASS_OPTICS}
+          >
+            <Experience companies={mappedCompanies.length > 0 ? mappedCompanies : undefined} />
+          </Container>
+        </div>
+
+        <div className="order-4 min-[890px]:order-0 w-full">
+          <Container
+            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            radius={36}
+            optics={GLASS_OPTICS}
+          >
+            <Writings items={mappedEssays.length > 0 ? mappedEssays : undefined} />
+          </Container>
+        </div>
+        <div className="order-4 min-[890px]:order-0 w-full">
+          <Container
+            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            radius={36}
+            optics={GLASS_OPTICS}
+          >
+            <PaperShelf items={mappedPapers.length > 0 ? mappedPapers : undefined} />
+          </Container>
+        </div>
+      </div>
     </div>
   );
 }
