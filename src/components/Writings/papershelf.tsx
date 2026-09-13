@@ -8,32 +8,39 @@ export interface PaperItem {
 
 const defaultWritings: PaperItem[] = [
   {
-    date: '10/July/2003',
-    title: "Real-time Data Infrastructure at Uber",
+    date: '15/May/2024',
+    title: 'Spanner: Google’s Globally-Distributed Database',
+    slug: 'spanner-google-s-globally-distributed-database',
   },
   {
-    date: '10/July/2003',
-    title: "DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning",
+    date: '08/Apr/2024',
+    title: 'Attention Is All You Need',
+    slug: 'attention-is-all-you-need',
   },
   {
-    date: '10/July/2003',
-    title: "Lost in the Middle: How Language Models Use Long Contexts",
+    date: '20/Feb/2024',
+    title: 'Bigtable: A Distributed Storage System for Structured Data',
+    slug: 'bigtable-a-distributed-storage-system-for-structured-data',
   },
   {
-    date: '10/July/2003',
-    title: "Yedalog: Exploring Knowledge at Scale",
+    date: '12/Jan/2024',
+    title: 'C/C++ Thread Safety Analysis',
+    slug: 'c-c-thread-safety-analysis',
   },
   {
-    date: '10/July/2003',
-    title: "C/C++ Thread Safety Analysis",
+    date: '05/Nov/2023',
+    title: 'MapReduce: Simplified Data Processing on Large Clusters',
+    slug: 'mapreduce-simplified-data-processing-on-large-clusters',
   },
   {
-    date: '10/July/2003',
-    title: "Mesa: Geo-Replicated, Near Real-Time, Scalable Data Warehousing",
+    date: '18/Sep/2023',
+    title: 'Firecracker: Lightweight virtualization for serverless applications',
+    slug: 'firecracker-lightweight-virtualization-for-serverless-applications',
   },
   {
-    date: '10/July/2003',
-    title: "MyRocks: LSM-Tree Database Storage Engine Serving Facebook's Social Graph",
+    date: '22/Jul/2023',
+    title: 'The Google File System',
+    slug: 'the-google-file-system',
   },
 ];
 

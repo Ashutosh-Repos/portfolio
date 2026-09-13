@@ -28,7 +28,7 @@ export default async function Home() {
   }));
 
   const formatWritingDate = (ts: number | null) => {
-    if (!ts) return '10/July/2003';
+    if (!ts) return 'Recent';
     const d = new Date(ts);
     return `${d.getDate()}/${d.toLocaleString('en-US', { month: 'short' })}/${d.getFullYear()}`;
   };

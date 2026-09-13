@@ -8,32 +8,39 @@ export interface WritingItem {
 
 const defaultWritings: WritingItem[] = [
   {
-    date: '10/July/2003',
+    date: '29/Jul/2026',
     title: 'Outcomes',
+    slug: 'outcomes',
   },
   {
-    date: '10/July/2003',
-    title: 'Manufacturing Luck',
-  },
-  {
-    date: '10/July/2003',
+    date: '15/Jun/2026',
     title: "Taste Can't Be Prompted",
+    slug: 'taste-cant-be-prompted',
   },
   {
-    date: '10/July/2003',
-    title: 'Trying to Be Human',
-  },
-  {
-    date: '10/July/2003',
+    date: '02/May/2026',
     title: 'Buy a Domain',
+    slug: 'buy-a-domain',
   },
   {
-    date: '10/July/2003',
+    date: '18/Apr/2026',
+    title: 'Stop Writing Fictional Case Studies',
+    slug: 'stop-fictional-case-studies',
+  },
+  {
+    date: '04/Mar/2026',
+    title: 'Design Is The Moat',
+    slug: 'design-is-the-moat',
+  },
+  {
+    date: '10/Feb/2026',
     title: 'Growth Without Hacks',
+    slug: 'growth-without-hacks',
   },
   {
-    date: '10/July/2003',
+    date: '14/Jan/2026',
     title: 'Make Something YOU Want',
+    slug: 'make-something-you-want',
   },
 ];
 

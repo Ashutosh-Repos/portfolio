@@ -12,6 +12,8 @@ export interface BaseArticle {
   readingTimeMinutes?: number | null;
   tags?: string[];
   citations?: Array<{ title: string; url?: string; author?: string; doi?: string }>;
+  canonicalUrl?: string | null;
+  paperUrl?: string | null;
 }
 
 export interface ArticleViewProps {
@@ -110,6 +112,20 @@ export const ArticleView = ({ sectionLabel, sectionHref, article }: ArticleViewP
         {article.excerpt && (
           <div className="p-4 rounded-2xl bg-foreground/[0.03] border border-black/5 dark:border-white/5 text-base sm:text-lg italic text-foreground/85 leading-snug">
             {article.excerpt}
+          </div>
+        )}
+
+        {(article.paperUrl || article.canonicalUrl) && (
+          <div className="flex items-center gap-3">
+            <a
+              href={(article.paperUrl || article.canonicalUrl) as string}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-200"
+            >
+              <span>{article.paperUrl ? '📄 Read Original Paper PDF' : '🔗 Canonical Source'}</span>
+              <span>&nearr;</span>
+            </a>
           </div>
         )}
 

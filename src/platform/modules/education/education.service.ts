@@ -2,6 +2,23 @@ import { db, schema } from '../../db';
 import { eq, asc } from 'drizzle-orm';
 import { NotFoundError } from '../../core/errors';
 
+export interface EducationMediaDto {
+  id: string;
+  publicUrl: string;
+  altText: string | null;
+  caption: string | null;
+  width: number | null;
+  height: number | null;
+}
+
+export interface EducationGalleryDto {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  items: EducationMediaDto[];
+}
+
 export interface EducationDto {
   id: string;
   slug: string;
@@ -18,6 +35,7 @@ export interface EducationDto {
   links: Array<{ title: string; url: string; type?: string }>;
   logoUrl?: string | null;
   galleryId?: string | null;
+  gallery?: EducationGalleryDto | null;
   sortOrder: number;
 }
 
@@ -27,6 +45,36 @@ export class EducationService {
       .select()
       .from(schema.education)
       .orderBy(asc(schema.education.sortOrder));
+
+    const galleryMap = new Map<string, EducationGalleryDto>();
+    const galleryIds = records.map((r) => r.galleryId).filter(Boolean) as string[];
+
+    if (galleryIds.length > 0) {
+      const galleries = await db.select().from(schema.gallery);
+      for (const g of galleries) {
+        const items = await db
+          .select({
+            id: schema.mediaItem.id,
+            publicUrl: schema.mediaItem.publicUrl,
+            altText: schema.mediaItem.altText,
+            caption: schema.mediaItem.caption,
+            width: schema.mediaItem.width,
+            height: schema.mediaItem.height,
+          })
+          .from(schema.galleryItem)
+          .innerJoin(schema.mediaItem, eq(schema.galleryItem.mediaId, schema.mediaItem.id))
+          .where(eq(schema.galleryItem.galleryId, g.id))
+          .orderBy(asc(schema.galleryItem.sortOrder));
+
+        galleryMap.set(g.id, {
+          id: g.id,
+          slug: g.slug,
+          title: g.title,
+          description: g.description,
+          items,
+        });
+      }
+    }
 
     return records.map((item) => ({
       id: item.id,
@@ -43,6 +91,7 @@ export class EducationService {
       highlights: item.highlightsJson ? JSON.parse(item.highlightsJson) : [],
       links: item.linksJson ? JSON.parse(item.linksJson) : [],
       galleryId: item.galleryId,
+      gallery: item.galleryId ? galleryMap.get(item.galleryId) || null : null,
       sortOrder: item.sortOrder,
     }));
   }

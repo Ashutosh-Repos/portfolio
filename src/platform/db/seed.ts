@@ -1,122 +1,17 @@
 import { db, schema } from './index';
 import { sql } from 'drizzle-orm';
 import { seedAllArpitBlogs } from './fetch-and-seed-blogs';
+import { seedAllWritings } from './seed-all-writings';
+import { seedAllPapers } from './seed-all-papers';
+import { seedMediaAndGalleries } from './seed-media-and-galleries';
+import { seedHobbies } from './seed-hobbies';
 
 export async function seedDatabase() {
   console.log('🌱 Starting database seed...');
   const now = Date.now();
 
-  // 1. Profile
-  await db
-    .insert(schema.profile)
-    .values({
-      id: 'ashutosh-profile',
-      name: 'Ashutosh Kumar',
-      headline: 'Software Engineer & Systems Builder',
-      bio: 'Crafting performant web architectures, distributed systems, and AI-native tools with an obsession for high-fidelity UI and low-latency backends.',
-      currentFocus: 'Building AI agents, high-throughput microservices, and modern web applications.',
-      location: 'India',
-      availabilityStatus: 'Open to select high-impact technical advisory and engineering roles',
-      socialLinksJson: JSON.stringify([
-        { platform: 'GitHub', url: 'https://github.com/Ashutosh-Repos', username: 'Ashutosh-Repos', icon: 'github' },
-        { platform: 'LeetCode', url: 'https://leetcode.com/u/ashutosh0406/', username: 'ashutosh0406', icon: 'code' },
-        { platform: 'Twitter', url: 'https://twitter.com', username: 'ashutosh', icon: 'twitter' },
-        { platform: 'LinkedIn', url: 'https://linkedin.com', username: 'ashutosh-kumar', icon: 'linkedin' },
-      ]),
-      updatedAt: now,
-    })
-    .onConflictDoNothing();
-
-  // 2. Education
-  await db
-    .insert(schema.education)
-    .values({
-      id: 'edu-btech',
-      slug: 'btech-cse',
-      institution: 'APJ Abdul Kalam Technical University (AKTU)',
-      degree: 'Bachelor of Technology',
-      fieldOfStudy: 'Computer Science and Engineering',
-      gradeOrCgpa: '8.4 CGPA',
-      location: 'India',
-      startDate: '2021',
-      endDate: '2025',
-      isCurrent: false,
-      description: 'Specialized in Algorithms, Distributed Systems, Database Management Systems, and Object-Oriented Software Design.',
-      highlightsJson: JSON.stringify([
-        'Led student developer technical workshops on Modern Web Architecture and Cloud Computing.',
-        'Core contributor to campus open-source initiatives and hackathon mentorship.',
-      ]),
-      linksJson: JSON.stringify([
-        { title: 'University Portal', url: 'https://aktu.ac.in', type: 'institution' },
-      ]),
-      sortOrder: 1,
-      createdAt: now,
-      updatedAt: now,
-    })
-    .onConflictDoNothing();
-
-  // 3. Experience
-  await db
-    .insert(schema.experience)
-    .values([
-      {
-        id: 'exp-inamigos',
-        slug: 'inamigos',
-        company: 'InAmigos',
-        role: 'Web Developer',
-        employmentType: 'contract',
-        location: 'Remote',
-        locationType: 'remote',
-        startDate: '2023-01',
-        endDate: '2023-08',
-        isCurrent: false,
-        description: "An Indian NGO operating in free education, hunger relief, women's empowerment, animal welfare, and environmental sustainability.",
-        responsibilitiesJson: JSON.stringify([
-          'Architected responsive, mobile-first web pages to improve volunteer registration funnels.',
-          'Integrated secure donation and campaign event management workflows.',
-          'Optimized core web vitals, reducing page load times by over 40%.',
-        ]),
-        achievementsJson: JSON.stringify([
-          'Increased volunteer signup conversion rate by 28% through redesigned onboarding flows.',
-        ]),
-        technologiesJson: JSON.stringify(['React', 'JavaScript', 'CSS3', 'REST APIs', 'Git']),
-        storyMarkdown: 'Working with InAmigos gave me deep appreciation for building accessible, high-performance web products that serve real human needs under diverse network conditions.',
-        companyUrl: 'https://inamigosfoundation.org.in/',
-        logoUrl: '/images/inamigossq.jpg',
-        sortOrder: 1,
-        createdAt: now,
-        updatedAt: now,
-      },
-      {
-        id: 'exp-cheating-daddy',
-        slug: 'cheating-daddy',
-        company: 'Cheating Daddy',
-        role: 'Open Source Contributor & Architect',
-        employmentType: 'open_source',
-        location: 'Remote',
-        locationType: 'remote',
-        startDate: '2024-02',
-        endDate: null,
-        isCurrent: true,
-        description: 'Open-source developer utility suite and AI-assisted interview preparation tools.',
-        responsibilitiesJson: JSON.stringify([
-          'Developed real-time coding assistance and context-aware LLM prompt pipelines.',
-          'Engineered low-latency system integration hooks and developer productivity tools.',
-          'Maintained public documentation and resolved community pull requests.',
-        ]),
-        achievementsJson: JSON.stringify([
-          'Over 1,000+ developer stars and active community engagement across GitHub.',
-        ]),
-        technologiesJson: JSON.stringify(['TypeScript', 'Next.js', 'Tailwind CSS', 'OpenAI API', 'Node.js']),
-        storyMarkdown: 'Building developer tools in open source taught me the critical value of DX (Developer Experience), uncompromised latency, and intuitive UI interactions.',
-        companyUrl: 'https://cheatingdaddy.com/',
-        logoUrl: '/images/cheatingdaddysq.png',
-        sortOrder: 2,
-        createdAt: now,
-        updatedAt: now,
-      },
-    ])
-    .onConflictDoNothing();
+  // 1. Profile, Education, Experience, Media & Galleries (Scanned from public assets & resume)
+  await seedMediaAndGalleries();
 
   // 4a. GitHub Repo Snapshots
   const githubSnapshots = [
@@ -336,6 +231,24 @@ export async function seedDatabase() {
       topicsJson: JSON.stringify(['golang', 'hls', 'streaming', 'http']),
       syncedAt: now,
     },
+    {
+      id: 'Ashutosh-Repos/ShAI',
+      name: 'ShAI',
+      fullName: 'Ashutosh-Repos/ShAI',
+      description: 'AI-Powered CLI Assistant translating natural language into safe shell commands (Ink, React, SQLite, Ollama, Claude, OpenAI)',
+      stars: 22,
+      forks: 3,
+      openIssues: 0,
+      primaryLanguage: 'TypeScript',
+      languagesJson: JSON.stringify({ TypeScript: 92.0, JavaScript: 5.0, Shell: 3.0 }),
+      latestCommitSha: 'b4c5d6e',
+      latestCommitAt: now - 86400000 * 8,
+      isPinned: true,
+      repoUrl: 'https://github.com/Ashutosh-Repos/ShAI',
+      homepageUrl: 'https://www.npmjs.com/package/shai-shell',
+      topicsJson: JSON.stringify(['cli', 'ai', 'developer-tools', 'typescript', 'terminal']),
+      syncedAt: now,
+    },
   ];
 
   await db
@@ -354,6 +267,32 @@ export async function seedDatabase() {
   // 4b. Projects (Linked to GitHub Snapshots)
   const projectsData = [
     {
+      id: 'proj-shai',
+      slug: 'shai-cli',
+      title: 'Shai — AI Powered CLI Assistant',
+      tagline: 'Translates devs natural language commands into safe, executable shell commands',
+      description: 'A modular command-line utility translating natural language into shell commands with interactive terminal UI, security interceptors, multi-LLM routing, and encrypted offline history.',
+      caseStudyMarkdown: '# Shai — AI Powered CLI Assistant\n\nA production command-line developer assistant published on npm, combining React/Ink interactive terminal UI with security validation and unified multi-LLM clients.',
+      status: 'active',
+      featuredPriority: 1,
+      demoUrl: 'https://www.npmjs.com/package/shai-shell',
+      packageUrl: 'https://www.npmjs.com/package/shai-shell',
+      githubRepoId: 'Ashutosh-Repos/ShAI',
+      overrideGithubData: true,
+      technologiesJson: JSON.stringify(['TypeScript', 'Node.js', 'React', 'Ink', 'SQLite', 'Claude', 'OpenAI', 'Gemini']),
+      architectureJson: JSON.stringify([
+        'Modular OOP design pattern separating configuration, SQLite managers, and LLM API clients',
+        'Interactive TUI using React and Ink rendering real-time asynchronous streaming token flows',
+        'Automated security validation module parsing shell AST to intercept destructive commands',
+        'Encrypted offline prompt history engine leveraging embedded local SQLite'
+      ]),
+      lessonsLearnedMarkdown: 'Building terminal interfaces with React Ink requires strict layout lifecycle discipline, atomic state updates, and graceful terminal resize event debouncing.',
+      coverImageUrl: null,
+      sortOrder: 1,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
       id: 'proj-cheating-daddy',
       slug: 'cheating-daddy',
       title: 'Cheating Daddy',
@@ -361,7 +300,7 @@ export async function seedDatabase() {
       description: 'An open-source developer utility designed for intelligent coding interviews and live technical problem solving with multimodal AI assistants.',
       caseStudyMarkdown: '# Cheating Daddy\n\nA full breakdown of the real-time AI architecture, client-side hooks, and latency optimization techniques used.',
       status: 'active',
-      featuredPriority: 1,
+      featuredPriority: 2,
       demoUrl: 'https://cheatingdaddy.com/',
       packageUrl: null,
       githubRepoId: 'Ashutosh-Repos/cheating-daddy',
@@ -626,118 +565,15 @@ export async function seedDatabase() {
       },
     });
 
-  // 5. Writings
-  // 5a. Technical Blog Posts (type: 'blog')
-  const technicalBlogs = [
-    { title: 'Slop Debt', excerpt: 'Exploring the subtle architectural drag introduced by unreviewed AI-generated boilerplate in production codebases.' },
-    { title: 'What AI First Engineering Orgs Look Like', excerpt: 'How the shift toward generative agents and automated testing transforms engineering hierarchies and sprint velocity.' },
-    { title: 'Three Claude Skills I Think Every Org Should Have', excerpt: 'Practical, high-leverage agent skills for architectural linting, migration safety, and accessibility audits.' },
-    { title: 'G-Eval, Explained', excerpt: 'A deep dive into LLM-as-a-judge evaluation frameworks and continuous alignment benchmarks.' },
-    { title: 'AI Workflows Need Topological Sort', excerpt: 'Why linear prompt chaining breaks down in non-trivial multi-agent DAG execution and how directed graphs solve it.' },
-    { title: 'Embedding Models Make Or Break Your Ai App', excerpt: 'Why chunking strategies and dimensionality choice often matter significantly more than fine-tuning.' },
-    { title: 'Temporal Primer - Building Long-Running Systems', excerpt: 'Durable execution patterns, determinism constraints, and fault-tolerant event loops with Temporal.' },
-    { title: 'What Matters in Production RAG', excerpt: 'Beyond simple vector search: hybrid sparse-dense retrieval, cross-encoders, and reranking in practice.' },
-  ];
-
-  for (let i = 0; i < technicalBlogs.length; i++) {
-    const item = technicalBlogs[i];
-    const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    await db
-      .insert(schema.writing)
-      .values({
-        id: `blog-${i + 1}`,
-        slug,
-        title: item.title,
-        subtitle: null,
-        excerpt: item.excerpt,
-        contentMarkdown: `# ${item.title}\n\n${item.excerpt}\n\nFull deep-dive essay on systems architecture and AI engineering coming soon.`,
-        type: 'blog',
-        status: 'published',
-        publishedAt: now - i * 86400000 * 5,
-        updatedAt: now,
-        readingTimeMinutes: 4 + (i % 4),
-        canonicalUrl: null,
-        coverImageUrl: null,
-        citationsJson: JSON.stringify([]),
-        tagsJson: JSON.stringify(['Engineering', 'AI', 'Architecture']),
-      })
-      .onConflictDoNothing();
-  }
-
-  // Insert all 36 full-length technical blogs (Bloom Filters, ACID merged, and 34 systems essays)
+  // 5. Writings & Publications
+  // 5a. Technical Blogs (36 Authentic Arpit Bhayani & Bloom Filters)
   await seedAllArpitBlogs();
 
-  // 5b. Personal Thoughts & Essays (type: 'essay')
-  const personalEssays = [
-    { title: 'Outcomes', excerpt: 'Process matters, but outcomes are what define real-world impact. Navigating effort vs actual delivery.' },
-    { title: 'Manufacturing Luck', excerpt: 'Luck is not purely stochastic; increasing surface area of ambition directly compounds fortunate encounters.' },
-    { title: "Taste Can't Be Prompted", excerpt: 'Why curation, judgment, and discernment become 10x more valuable as generative generation cost drops to zero.' },
-    { title: 'Trying to Be Human', excerpt: 'Reflections on intentional living, disconnecting from dopamine feedback loops, and deep presence.' },
-    { title: 'Buy a Domain', excerpt: 'The enduring freedom of personal digital real estate in an era of rented algorithmic platform feeds.' },
-    { title: 'Growth Without Hacks', excerpt: 'Sustainable product leverage through craftsmanship and obsessive attention to core user velocity.' },
-    { title: 'Make Something YOU Want', excerpt: 'The fastest path to authentic innovation is solving an acute, personal friction point.' },
-  ];
+  // 5b. Personal Essays (7 Authentic Designerdada Essays)
+  await seedAllWritings();
 
-  for (let i = 0; i < personalEssays.length; i++) {
-    const item = personalEssays[i];
-    const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    await db
-      .insert(schema.writing)
-      .values({
-        id: `essay-${i + 1}`,
-        slug,
-        title: item.title,
-        subtitle: null,
-        excerpt: item.excerpt,
-        contentMarkdown: `# ${item.title}\n\n${item.excerpt}\n\nFull philosophical reflection and essay coming soon.`,
-        type: 'essay',
-        status: 'published',
-        publishedAt: now - (i + 10) * 86400000 * 4,
-        updatedAt: now,
-        readingTimeMinutes: 3 + (i % 3),
-        canonicalUrl: null,
-        coverImageUrl: null,
-        citationsJson: JSON.stringify([]),
-        tagsJson: JSON.stringify(['Philosophy', 'Essays', 'Craft']),
-      })
-      .onConflictDoNothing();
-  }
-
-  // 5c. Research Papershelf (type: 'research_paper')
-  const researchPapers = [
-    { title: 'Real-time Data Infrastructure at Uber', excerpt: 'Architectural analysis of Uber streaming data pipeline scaling to petabytes with Apache Kafka, Flink, and Pinot.' },
-    { title: 'DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning', excerpt: 'Exploration of chain-of-thought verification models and test-time compute scaling for formal theorem proving.' },
-    { title: 'Lost in the Middle: How Language Models Use Long Contexts', excerpt: 'Empirical study on LLM attention degradation for documents placed in the middle of large context windows.' },
-    { title: 'Yedalog: Exploring Knowledge at Scale', excerpt: 'Google declarative logic programming language integrating Datalog with distributed semi-structured data.' },
-    { title: 'C/C++ Thread Safety Analysis', excerpt: 'Clang compiler-level static annotation framework for compile-time race detection and mutex lock enforcement.' },
-    { title: 'Mesa: Geo-Replicated, Near Real-Time, Scalable Data Warehousing', excerpt: 'Google multi-datacenter transactional analytics engine handling atomic continuous updates.' },
-    { title: "MyRocks: LSM-Tree Database Storage Engine Serving Facebook's Social Graph", excerpt: 'Replacing InnoDB B-trees with RocksDB LSM-trees to reduce flash storage footprint by 50%.' },
-  ];
-
-  for (let i = 0; i < researchPapers.length; i++) {
-    const item = researchPapers[i];
-    const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    await db
-      .insert(schema.writing)
-      .values({
-        id: `paper-${i + 1}`,
-        slug,
-        title: item.title,
-        subtitle: null,
-        excerpt: item.excerpt,
-        contentMarkdown: `# ${item.title}\n\n${item.excerpt}\n\nDetailed breakdown of core architectural mechanisms, tradeoffs, and production implications.`,
-        type: 'research_paper',
-        status: 'published',
-        publishedAt: now - (i + 20) * 86400000 * 3,
-        updatedAt: now,
-        readingTimeMinutes: 8 + (i % 5),
-        canonicalUrl: null,
-        coverImageUrl: null,
-        citationsJson: JSON.stringify([]),
-        tagsJson: JSON.stringify(['Systems', 'Distributed Computing', 'Databases', 'Papers']),
-      })
-      .onConflictDoNothing();
-  }
+  // 5c. Research Papershelf (82 Seminal Papers)
+  await seedAllPapers();
 
   // 6. Skills
   const defaultSkills = [
@@ -831,258 +667,12 @@ export async function seedDatabase() {
     ])
     .onConflictDoNothing();
 
-  // 8. Hobbies & Media Entries (Movies and Series)
-  const mediaEntriesData = [
-    {
-      id: 'movie-interstellar',
-      slug: 'interstellar',
-      type: 'movie',
-      externalProvider: 'tmdb',
-      externalId: '157336',
-      title: 'Interstellar',
-      releaseYear: 2014,
-      genresJson: JSON.stringify(['Sci-Fi', 'Drama', 'Adventure']),
-      creatorsJson: JSON.stringify(['Christopher Nolan']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
-      backdropUrl: null,
-      myRating: 9.8,
-      watchStatus: 'completed',
-      consumedAt: '2023-11',
-      personalReview: 'A sublime exploration of relativity, grief, and love as a quantifiable physical dimension. Zimmer soundtrack elevates the entire film into transcendence.',
-      favoriteCharactersJson: JSON.stringify(['Cooper', 'TARS', 'Murph']),
-      favoriteScenesJson: JSON.stringify(["Docking sequence ('No, it's necessary')", 'Miller planet tidal wave', 'Tesseract communication']),
-      quotesJson: JSON.stringify(['Do not go gentle into that good night.', "We used to look up at the sky and wonder at our place in the stars. Now we just look down, and worry about our place in the dirt."]),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'movie-the-social-network',
-      slug: 'the-social-network',
-      type: 'movie',
-      externalProvider: 'tmdb',
-      externalId: '37799',
-      title: 'The Social Network',
-      releaseYear: 2010,
-      genresJson: JSON.stringify(['Biography', 'Drama']),
-      creatorsJson: JSON.stringify(['David Fincher', 'Aaron Sorkin']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTpTzbpHignAP.jpg',
-      backdropUrl: null,
-      myRating: 9.5,
-      watchStatus: 'completed',
-      consumedAt: '2023-08',
-      personalReview: 'Peak dialogue delivery, cutting editing, and Trent Reznor score. The definitive modern tragedy about ambition and connection.',
-      favoriteCharactersJson: JSON.stringify(['Mark Zuckerberg', 'Eduardo Saverin', 'Sean Parker']),
-      favoriteScenesJson: JSON.stringify(['Winklevoss rowing sequence', 'Sean Parker nightclub pitch', 'Initial Facemash coding montage']),
-      quotesJson: JSON.stringify(["A million dollars isn't cool. You know what's cool? A billion dollars."]),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'movie-oppenheimer',
-      slug: 'oppenheimer',
-      type: 'movie',
-      externalProvider: 'tmdb',
-      externalId: '872585',
-      title: 'Oppenheimer',
-      releaseYear: 2023,
-      genresJson: JSON.stringify(['Biography', 'Drama', 'History']),
-      creatorsJson: JSON.stringify(['Christopher Nolan']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      backdropUrl: null,
-      myRating: 9.7,
-      watchStatus: 'completed',
-      consumedAt: '2023-09',
-      personalReview: 'A masterclass in tension, historical gravity, and moral dread. Ludwig Göransson’s Can You Hear the Music propels theoretical physics into visceral kinetic cinema.',
-      favoriteCharactersJson: JSON.stringify(['J. Robert Oppenheimer', 'Lewis Strauss', 'Isidor Isaac Rabi']),
-      favoriteScenesJson: JSON.stringify(['Trinity test silence and shockwave', 'Gymnasium stomping speech hallucination', 'Pond conversation with Einstein']),
-      quotesJson: JSON.stringify(['Now I am become Death, the destroyer of worlds.', 'They won’t fear it until they understand it, and they won’t understand it until they’ve used it.']),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'movie-blade-runner-2049',
-      slug: 'blade-runner-2049',
-      type: 'movie',
-      externalProvider: 'tmdb',
-      externalId: '335984',
-      title: 'Blade Runner 2049',
-      releaseYear: 2017,
-      genresJson: JSON.stringify(['Sci-Fi', 'Mystery', 'Drama']),
-      creatorsJson: JSON.stringify(['Denis Villeneuve', 'Roger Deakins']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg',
-      backdropUrl: null,
-      myRating: 9.6,
-      watchStatus: 'completed',
-      consumedAt: '2023-06',
-      personalReview: 'Visually peerless world-building and atmospheric sound design. Roger Deakins cinematographic magnum opus questioning memory and soul.',
-      favoriteCharactersJson: JSON.stringify(['K / Joe', 'Joi', 'Rick Deckard']),
-      favoriteScenesJson: JSON.stringify(['Orange haze Las Vegas ruins walk', 'Baseline test recitations', 'Sea wall final confrontation']),
-      quotesJson: JSON.stringify(['Dying for the right cause. It’s the most human thing we can do.', 'All the best memories are hers.']),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'movie-whiplash',
-      slug: 'whiplash',
-      type: 'movie',
-      externalProvider: 'tmdb',
-      externalId: '244786',
-      title: 'Whiplash',
-      releaseYear: 2014,
-      genresJson: JSON.stringify(['Drama', 'Music']),
-      creatorsJson: JSON.stringify(['Damien Chazelle']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg',
-      backdropUrl: null,
-      myRating: 9.6,
-      watchStatus: 'completed',
-      consumedAt: '2023-04',
-      personalReview: 'Relentless psychological warfare disguised as musical mentorship. The finale Caravan solo is pure adrenaline.',
-      favoriteCharactersJson: JSON.stringify(['Andrew Neiman', 'Terence Fletcher']),
-      favoriteScenesJson: JSON.stringify(['Caravan climactic drum solo', 'Studio band double-time swing audition']),
-      quotesJson: JSON.stringify(['There are no two words in the English language more harmful than "good job".']),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'series-mr-robot',
-      slug: 'mr-robot',
-      type: 'tv_series',
-      externalProvider: 'tmdb',
-      externalId: '62560',
-      title: 'Mr. Robot',
-      releaseYear: 2015,
-      genresJson: JSON.stringify(['Crime', 'Drama', 'Thriller']),
-      creatorsJson: JSON.stringify(['Sam Esmail']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/kv1nRsgErgTLeTXXAbe5i8T91v6.jpg',
-      backdropUrl: null,
-      myRating: 9.9,
-      watchStatus: 'completed',
-      consumedAt: '2024-01',
-      personalReview: 'The most technically accurate portrayal of cybersecurity, Linux terminals, and social engineering in television history, wrapped in a deeply human study of trauma.',
-      favoriteCharactersJson: JSON.stringify(['Elliot Alderson', 'Darlene', 'Tyrell Wellick', 'Leon', 'Whiterose']),
-      favoriteScenesJson: JSON.stringify(['Season 3 continuous tracking shot episode', 'Season 4 commercial-free heist episode', 'Virtual terminal hack sequences']),
-      quotesJson: JSON.stringify(["Hello, friend. Hello, friend? That's lame. Maybe I should give you a name."]),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'series-silicon-valley',
-      slug: 'silicon-valley',
-      type: 'tv_series',
-      externalProvider: 'tmdb',
-      externalId: '60573',
-      title: 'Silicon Valley',
-      releaseYear: 2014,
-      genresJson: JSON.stringify(['Comedy']),
-      creatorsJson: JSON.stringify(['Mike Judge']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/wz7VzC1l1zFsmQeQdM6aT0eQ9kK.jpg',
-      backdropUrl: null,
-      myRating: 9.4,
-      watchStatus: 'completed',
-      consumedAt: '2023-05',
-      personalReview: 'Hilariously perceptive satire of venture capital mania, pivot culture, middle-out compression algorithms, and startup politics.',
-      favoriteCharactersJson: JSON.stringify(['Richard Hendricks', 'Jared Dunn', 'Gilfoyle', 'Dinesh', 'Erlich Bachman']),
-      favoriteScenesJson: JSON.stringify(['TechCrunch Disrupt presentation', 'Gilfoyle Bitcoin alert siren', 'SWOT analysis board']),
-      quotesJson: JSON.stringify(['I am a server architect, not an engineer.', 'Making the world a better place through consensus protocols.']),
-      tier: 'favorite',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'series-severance',
-      slug: 'severance',
-      type: 'tv_series',
-      externalProvider: 'tmdb',
-      externalId: '95396',
-      title: 'Severance',
-      releaseYear: 2022,
-      genresJson: JSON.stringify(['Sci-Fi', 'Mystery', 'Drama']),
-      creatorsJson: JSON.stringify(['Dan Erickson', 'Ben Stiller']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/pPHpeIqlzpTbt12161GgmvmRIm.jpg',
-      backdropUrl: null,
-      myRating: 9.8,
-      watchStatus: 'completed',
-      consumedAt: '2023-12',
-      personalReview: 'A chilling, surgically crafted dissection of corporate alienation, memory partitioning, and identity. The season finale is textbook cliffhanger perfection.',
-      favoriteCharactersJson: JSON.stringify(['Mark Scout', 'Helly R.', 'Irving Bailiff', 'Dylan G.']),
-      favoriteScenesJson: JSON.stringify(['The Defiant Jazz dance experience', 'Dylan stretching to hold the Overtime Contingency switches', 'Helly Lumon gala speech']),
-      quotesJson: JSON.stringify(['Please try to enjoy each fact equally, and not show preference for any over the others.', 'The work is mysterious and important.']),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'series-dark',
-      slug: 'dark',
-      type: 'tv_series',
-      externalProvider: 'tmdb',
-      externalId: '70523',
-      title: 'Dark',
-      releaseYear: 2017,
-      genresJson: JSON.stringify(['Sci-Fi', 'Mystery', 'Drama']),
-      creatorsJson: JSON.stringify(['Baran bo Odar', 'Jantje Friese']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/apbrbWs8M9lyOpJYU5WXrpFbk1Z.jpg',
-      backdropUrl: null,
-      myRating: 9.7,
-      watchStatus: 'completed',
-      consumedAt: '2023-03',
-      personalReview: 'The absolute pinnacle of deterministic time-travel narratives. Perfectly constructed 33-year cycles, unforgettable score by Ben Frost, and breathtaking symmetry.',
-      favoriteCharactersJson: JSON.stringify(['Jonas Kahnwald', 'Claudia Tiedemann', 'Noah', 'Mikkel Nielsen']),
-      favoriteScenesJson: JSON.stringify(['Season 1 montage to Familja', 'Claudia explaining the origin world', 'Cave bunker wormhole activation']),
-      quotesJson: JSON.stringify(['The question is not where, but when.', 'What we know is a drop, what we don’t know is an ocean.']),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'series-succession',
-      slug: 'succession',
-      type: 'tv_series',
-      externalProvider: 'tmdb',
-      externalId: '76331',
-      title: 'Succession',
-      releaseYear: 2018,
-      genresJson: JSON.stringify(['Drama']),
-      creatorsJson: JSON.stringify(['Jesse Armstrong']),
-      posterUrl: 'https://image.tmdb.org/t/p/w500/7vjaCdMw15FEbXyLQTVa04URsPm.jpg',
-      backdropUrl: null,
-      myRating: 9.7,
-      watchStatus: 'completed',
-      consumedAt: '2023-07',
-      personalReview: 'Shakespearean family dynamics colliding with late-stage conglomerate capitalism. Nicholas Britell score and razor-sharp venomous writing.',
-      favoriteCharactersJson: JSON.stringify(['Kendall Roy', 'Logan Roy', 'Tom Wambsgans', 'Greg Hirsch', 'Roman Roy']),
-      favoriteScenesJson: JSON.stringify(['Season 2 press conference betrayal', 'Connor wedding airplane phone call', 'Meal fit for a king']),
-      quotesJson: JSON.stringify(['You are not serious people.', 'I love you, but you are not serious people.']),
-      tier: 'masterpiece',
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
+  // 7. Hobbies, Movies & Webseries
+  await seedHobbies();
 
-  await db
-    .insert(schema.mediaEntry)
-    .values(mediaEntriesData)
-    .onConflictDoUpdate({
-      target: schema.mediaEntry.id,
-      set: {
-        title: sql`excluded.title`,
-        posterUrl: sql`excluded.poster_url`,
-        myRating: sql`excluded.my_rating`,
-        personalReview: sql`excluded.personal_review`,
-        favoriteCharactersJson: sql`excluded.favorite_characters_json`,
-        favoriteScenesJson: sql`excluded.favorite_scenes_json`,
-        quotesJson: sql`excluded.quotes_json`,
-        genresJson: sql`excluded.genres_json`,
-        creatorsJson: sql`excluded.creators_json`,
-        updatedAt: now,
-      },
-    });
+  // 8. Schema Completeness: Achievements, Comprehensive Skills, Providers, Tags & Relations
+  const { seedSchemaCompleteness } = await import('./seed-schema-completeness');
+  await seedSchemaCompleteness();
 
   console.log('✅ Database seeded successfully!');
 }

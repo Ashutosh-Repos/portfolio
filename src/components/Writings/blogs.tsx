@@ -8,36 +8,44 @@ export interface BlogItem {
 
 const defaultWritings: BlogItem[] = [
   {
-    date: '10/July/2003',
-    title: "Slop Debt",
+    date: '14/Aug/2024',
+    title: 'Bloom Filters: Deconstructed and Demystified',
+    slug: 'bloom-filters',
   },
   {
-    date: '10/July/2003',
-    title: "What AI First Engineering Orgs Look Like",
+    date: '02/Jan/2024',
+    title: 'ACID in Databases: Atomicity, Consistency, Isolation, and Durability',
+    slug: 'acid',
   },
   {
-    date: '10/July/2003',
-    title: "Three Claude Skills I Think Every Org Should Have",
+    date: '18/May/2024',
+    title: 'Why Distributed Consensus Matters',
+    slug: 'why-consensus',
   },
   {
-    date: '10/July/2003',
-    title: "G-Eval, Explained",
+    date: '14/Mar/2024',
+    title: 'Understanding Database Deadlocks',
+    slug: 'database-deadlocks',
   },
   {
-    date: '10/July/2003',
-    title: "AI Workflows Need Topological Sort",
+    date: '28/Feb/2024',
+    title: 'Sliding Window Counter Rate Limiting',
+    slug: 'sliding-window-ratelimiter',
   },
   {
-    date: '10/July/2003',
-    title: "Embedding Models Make Or Break Your Ai App",
+    date: '19/Jan/2024',
+    title: 'The Architecture of Bitcask: A High-Performance Append-Only KV Store',
+    slug: 'bitcask',
   },
   {
-    date: '10/July/2003',
-    title: "Temporal Primer - Building Long-Running Systems",
+    date: '10/Dec/2023',
+    title: 'Midpoint Insertion Caching Strategy',
+    slug: 'midpoint-insertion-caching-strategy',
   },
   {
-    date: '10/July/2003',
-    title: "What Matters in Production RAG",
+    date: '05/Nov/2023',
+    title: 'Copy-on-Write: Architecture and Trade-offs',
+    slug: 'copy-on-write',
   },
 ];
 

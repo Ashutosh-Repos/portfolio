@@ -42,7 +42,10 @@ export default async function PaperDetailPage({ params }: PaperPageProps) {
     <ArticleView
       sectionLabel="Papershelf"
       sectionHref="/papershelf"
-      article={article}
+      article={{
+        ...article,
+        paperUrl: article.canonicalUrl,
+      }}
     />
   );
 }

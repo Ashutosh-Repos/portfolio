@@ -86,18 +86,32 @@ export default async function PapershelfPage() {
                   </p>
                 )}
 
-                {paper.tags && paper.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {paper.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 text-[11px] font-mono rounded bg-foreground/[0.05] text-foreground/60 border border-black/5 dark:border-white/5"
-                      >
-                        #{tag.toLowerCase().replace(/\s+/g, '-')}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
+                  {paper.tags && paper.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {paper.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 text-[11px] font-mono rounded bg-foreground/[0.05] text-foreground/60 border border-black/5 dark:border-white/5"
+                        >
+                          #{tag.toLowerCase().replace(/\s+/g, '-')}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {paper.canonicalUrl && (
+                    <a
+                      href={paper.canonicalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-mono text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 shrink-0"
+                    >
+                      <span>PDF Document</span>
+                      <span>&nearr;</span>
+                    </a>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
