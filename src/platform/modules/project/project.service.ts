@@ -33,11 +33,13 @@ export interface ProjectDto {
 }
 
 export class ProjectService {
-  async getProjects(options: {
-    status?: string;
-    featuredOnly?: boolean;
-    limit?: number;
-  } = {}): Promise<ProjectDto[]> {
+  async getProjects(
+    options: {
+      status?: string;
+      featuredOnly?: boolean;
+      limit?: number;
+    } = {},
+  ): Promise<ProjectDto[]> {
     const conditions = [];
 
     if (options.status) {
@@ -55,7 +57,7 @@ export class ProjectService {
       .from(schema.project)
       .leftJoin(
         schema.githubRepoSnapshot,
-        eq(schema.project.githubRepoId, schema.githubRepoSnapshot.id)
+        eq(schema.project.githubRepoId, schema.githubRepoSnapshot.id),
       );
 
     const rows = await (conditions.length > 0
@@ -64,14 +66,14 @@ export class ProjectService {
           .orderBy(
             sql`CASE WHEN ${schema.project.featuredPriority} IS NULL THEN 1 ELSE 0 END`,
             asc(schema.project.featuredPriority),
-            asc(schema.project.sortOrder)
+            asc(schema.project.sortOrder),
           )
           .limit(options.limit || 50)
       : baseQuery
           .orderBy(
             sql`CASE WHEN ${schema.project.featuredPriority} IS NULL THEN 1 ELSE 0 END`,
             asc(schema.project.featuredPriority),
-            asc(schema.project.sortOrder)
+            asc(schema.project.sortOrder),
           )
           .limit(options.limit || 50));
 
@@ -86,8 +88,12 @@ export class ProjectService {
       featuredPriority: project.featuredPriority,
       demoUrl: project.demoUrl,
       packageUrl: project.packageUrl,
-      technologies: project.technologiesJson ? JSON.parse(project.technologiesJson) : [],
-      architecture: project.architectureJson ? JSON.parse(project.architectureJson) : [],
+      technologies: project.technologiesJson
+        ? JSON.parse(project.technologiesJson)
+        : [],
+      architecture: project.architectureJson
+        ? JSON.parse(project.architectureJson)
+        : [],
       lessonsLearnedMarkdown: project.lessonsLearnedMarkdown,
       coverImageUrl: project.coverImageUrl,
       galleryId: project.galleryId,
@@ -100,7 +106,9 @@ export class ProjectService {
             forks: github.forks,
             openIssues: github.openIssues,
             primaryLanguage: github.primaryLanguage,
-            languages: github.languagesJson ? JSON.parse(github.languagesJson) : {},
+            languages: github.languagesJson
+              ? JSON.parse(github.languagesJson)
+              : {},
             latestCommitAt: github.latestCommitAt,
             repoUrl: github.repoUrl,
           }
@@ -117,7 +125,7 @@ export class ProjectService {
       .from(schema.project)
       .leftJoin(
         schema.githubRepoSnapshot,
-        eq(schema.project.githubRepoId, schema.githubRepoSnapshot.id)
+        eq(schema.project.githubRepoId, schema.githubRepoSnapshot.id),
       )
       .where(eq(schema.project.slug, slug))
       .limit(1);
@@ -139,8 +147,12 @@ export class ProjectService {
       featuredPriority: project.featuredPriority,
       demoUrl: project.demoUrl,
       packageUrl: project.packageUrl,
-      technologies: project.technologiesJson ? JSON.parse(project.technologiesJson) : [],
-      architecture: project.architectureJson ? JSON.parse(project.architectureJson) : [],
+      technologies: project.technologiesJson
+        ? JSON.parse(project.technologiesJson)
+        : [],
+      architecture: project.architectureJson
+        ? JSON.parse(project.architectureJson)
+        : [],
       lessonsLearnedMarkdown: project.lessonsLearnedMarkdown,
       coverImageUrl: project.coverImageUrl,
       galleryId: project.galleryId,
@@ -153,7 +165,9 @@ export class ProjectService {
             forks: github.forks,
             openIssues: github.openIssues,
             primaryLanguage: github.primaryLanguage,
-            languages: github.languagesJson ? JSON.parse(github.languagesJson) : {},
+            languages: github.languagesJson
+              ? JSON.parse(github.languagesJson)
+              : {},
             latestCommitAt: github.latestCommitAt,
             repoUrl: github.repoUrl,
           }

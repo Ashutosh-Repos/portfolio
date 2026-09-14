@@ -39,22 +39,28 @@ export async function GET(request: NextRequest) {
     if (host.includes('chess.com') && parsed.pathname.includes('/member/')) {
       const username = parsed.pathname.split('/member/')[1]?.replace(/\/$/, '');
       if (username) {
-        return NextResponse.redirect(`https://www.chess.com/share/user/${username}`, 307);
+        return NextResponse.redirect(
+          `https://www.chess.com/share/user/${username}`,
+          307,
+        );
       }
     }
 
     if (host.includes('inamigosfoundation.org.in')) {
       return NextResponse.redirect(
         'https://inamigosfoundation.org.in/public/storage/slideshow/1738235951.jpg',
-        307
+        307,
       );
     }
 
-    if (host.includes('github.com') && parsed.pathname.split('/').filter(Boolean).length === 1) {
+    if (
+      host.includes('github.com') &&
+      parsed.pathname.split('/').filter(Boolean).length === 1
+    ) {
       const username = parsed.pathname.split('/')[1];
       return NextResponse.redirect(
         `https://opengraph.githubassets.com/1/${username}`,
-        307
+        307,
       );
     }
 
@@ -76,10 +82,18 @@ export async function GET(request: NextRequest) {
       if (res.ok) {
         const html = await res.text();
         const ogMatch =
-          html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
-          html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i) ||
-          html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) ||
-          html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i);
+          html.match(
+            /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+          ) ||
+          html.match(
+            /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+          ) ||
+          html.match(
+            /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+          ) ||
+          html.match(
+            /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
+          );
 
         if (ogMatch && ogMatch[1]) {
           let ogImage = ogMatch[1].trim();
@@ -104,7 +118,10 @@ export async function GET(request: NextRequest) {
       'viewport.width': '1280',
       'viewport.height': '800',
     });
-    return NextResponse.redirect(`https://api.microlink.io/?${params.toString()}`, 307);
+    return NextResponse.redirect(
+      `https://api.microlink.io/?${params.toString()}`,
+      307,
+    );
   } catch {
     return new NextResponse('Invalid URL', { status: 400 });
   }

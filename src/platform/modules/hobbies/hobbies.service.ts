@@ -1,5 +1,5 @@
 import { db, schema } from '../../db';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, or, like } from 'drizzle-orm';
 import { NotFoundError } from '../../core/errors';
 
 export interface MediaEntryDto {
@@ -26,11 +26,14 @@ export interface MediaEntryDto {
 }
 
 export class HobbiesService {
-  async getMediaEntries(options: {
-    type?: string;
-    tier?: string;
-    watchStatus?: string;
-  } = {}): Promise<MediaEntryDto[]> {
+  async getMediaEntries(
+    options: {
+      type?: string;
+      tier?: string;
+      watchStatus?: string;
+      search?: string;
+    } = {},
+  ): Promise<MediaEntryDto[]> {
     const conditions = [];
     if (options.type) {
       conditions.push(eq(schema.mediaEntry.type, options.type));
@@ -41,10 +44,23 @@ export class HobbiesService {
     if (options.watchStatus) {
       conditions.push(eq(schema.mediaEntry.watchStatus, options.watchStatus));
     }
+    if (options.search && options.search.trim()) {
+      const q = `%${options.search.trim()}%`;
+      conditions.push(
+        or(
+          like(schema.mediaEntry.title, q),
+          like(schema.mediaEntry.creatorsJson, q),
+          like(schema.mediaEntry.genresJson, q),
+          like(schema.mediaEntry.personalReview, q),
+        ),
+      );
+    }
 
     const query = db.select().from(schema.mediaEntry);
     const records = await (conditions.length > 0
-      ? query.where(and(...conditions)).orderBy(desc(schema.mediaEntry.myRating))
+      ? query
+          .where(and(...conditions))
+          .orderBy(desc(schema.mediaEntry.myRating))
       : query.orderBy(desc(schema.mediaEntry.myRating)));
 
     return records.map((item) => ({
@@ -63,8 +79,12 @@ export class HobbiesService {
       watchStatus: item.watchStatus,
       consumedAt: item.consumedAt,
       personalReview: item.personalReview,
-      favoriteCharacters: item.favoriteCharactersJson ? JSON.parse(item.favoriteCharactersJson) : [],
-      favoriteScenes: item.favoriteScenesJson ? JSON.parse(item.favoriteScenesJson) : [],
+      favoriteCharacters: item.favoriteCharactersJson
+        ? JSON.parse(item.favoriteCharactersJson)
+        : [],
+      favoriteScenes: item.favoriteScenesJson
+        ? JSON.parse(item.favoriteScenesJson)
+        : [],
       quotes: item.quotesJson ? JSON.parse(item.quotesJson) : [],
       tier: item.tier,
       galleryId: item.galleryId,
@@ -99,8 +119,12 @@ export class HobbiesService {
       watchStatus: item.watchStatus,
       consumedAt: item.consumedAt,
       personalReview: item.personalReview,
-      favoriteCharacters: item.favoriteCharactersJson ? JSON.parse(item.favoriteCharactersJson) : [],
-      favoriteScenes: item.favoriteScenesJson ? JSON.parse(item.favoriteScenesJson) : [],
+      favoriteCharacters: item.favoriteCharactersJson
+        ? JSON.parse(item.favoriteCharactersJson)
+        : [],
+      favoriteScenes: item.favoriteScenesJson
+        ? JSON.parse(item.favoriteScenesJson)
+        : [],
       quotes: item.quotesJson ? JSON.parse(item.quotesJson) : [],
       tier: item.tier,
       galleryId: item.galleryId,

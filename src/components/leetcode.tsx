@@ -18,8 +18,6 @@ import { StatBubble } from './ui/stat-bubble';
 import LinkPreview from './ui/link-preview';
 import { MAX_GLASS_OPTICS } from '@/lib/glass-config';
 
-
-
 const INITIAL_LEETCODE_STATS: LeetCodeStatsData = {
   user: {
     username: 'ashutosh0406',
@@ -65,8 +63,6 @@ const INITIAL_LEETCODE_STATS: LeetCodeStatsData = {
   ],
 };
 
-
-
 export interface LeetCodeStatsProps {
   isExpanded?: boolean;
   onToggleExpand?: () => void;
@@ -77,7 +73,8 @@ export const LeetCodeStats = ({
   onToggleExpand,
 }: LeetCodeStatsProps = {}) => {
   const [internalExpanded, setInternalExpanded] = useState(false);
-  const isExpanded = isExpandedProp !== undefined ? isExpandedProp : internalExpanded;
+  const isExpanded =
+    isExpandedProp !== undefined ? isExpandedProp : internalExpanded;
 
   const handleToggle = () => {
     if (onToggleExpand) {
@@ -148,10 +145,7 @@ export const LeetCodeStats = ({
           </span>
 
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-foreground font-mono">
-            <span
-              className="flex items-center gap-1.5"
-              title="Global Ranking"
-            >
+            <span className="flex items-center gap-1.5" title="Global Ranking">
               <StatBubble
                 icon={Trophy}
                 color="bg-amber-400"
@@ -167,10 +161,7 @@ export const LeetCodeStats = ({
 
             <span className="hidden min-[420px]:inline-block w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700 shrink-0" />
 
-            <span
-              className="flex items-center gap-1.5"
-              title="Acceptance Rate"
-            >
+            <span className="flex items-center gap-1.5" title="Acceptance Rate">
               <StatBubble
                 icon={Target}
                 color="bg-emerald-500"
@@ -186,10 +177,7 @@ export const LeetCodeStats = ({
 
             <span className="hidden min-[420px]:inline-block w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700 shrink-0" />
 
-            <span
-              className="flex items-center gap-1.5"
-              title="Streak"
-            >
+            <span className="flex items-center gap-1.5" title="Streak">
               <StatBubble
                 icon={Flame}
                 color="bg-orange-500"
@@ -207,10 +195,7 @@ export const LeetCodeStats = ({
           <span className="text-foreground flex items-center">
             <StatBubble icon={Code2} color="bg-amber-500" />
             <span className="text-xs">
-              Solved -{' '}
-              <i className="text-foreground/50">
-                {stats.solved.all}
-              </i>
+              Solved - <i className="text-foreground/50">{stats.solved.all}</i>
             </span>
           </span>
           <span className="text-foreground flex items-center">

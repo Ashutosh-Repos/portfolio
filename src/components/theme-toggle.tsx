@@ -9,7 +9,11 @@ const emptySubscribe = () => () => {};
 /** @internal Unused — replaced by AnimatedThemeToggler. Kept for future reference. */
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
-  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   if (!mounted) {
     return <div className="w-8 h-8 rounded-full" />;

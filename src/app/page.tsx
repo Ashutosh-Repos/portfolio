@@ -12,17 +12,26 @@ import { writingService } from '@/platform/modules/writing/writing.service';
 import { blogService } from '@/platform/modules/blogs/blog.service';
 
 export default async function Home() {
-  const [experiences, blogsResult, essaysResult, papersResult] = await Promise.all([
-    experienceService.getExperiences().catch(() => []),
-    blogService.getBlogs({ limit: 10 }).catch(() => ({ items: [] })),
-    writingService.getWritings({ type: 'essay', limit: 10 }).catch(() => ({ items: [] })),
-    writingService.getWritings({ type: 'research_paper', limit: 10 }).catch(() => ({ items: [] })),
-  ]);
+  const [experiences, blogsResult, essaysResult, papersResult] =
+    await Promise.all([
+      experienceService.getExperiences().catch(() => []),
+      blogService.getBlogs({ limit: 10 }).catch(() => ({ items: [] })),
+      writingService
+        .getWritings({ type: 'essay', limit: 10 })
+        .catch(() => ({ items: [] })),
+      writingService
+        .getWritings({ type: 'research_paper', limit: 10 })
+        .catch(() => ({ items: [] })),
+    ]);
 
   const mappedCompanies = experiences.map((exp) => ({
     name: exp.company,
     role: exp.role,
-    logo: exp.logoUrl || '/images/inamigossq.jpg',
+    logo:
+      exp.logoUrl ||
+      (exp.company.toLowerCase().includes('cheating')
+        ? '/images/cheatingdaddysq.png'
+        : '/images/inamigossq.jpg'),
     url: exp.companyUrl || undefined,
     description: exp.description || undefined,
   }));
@@ -30,7 +39,9 @@ export default async function Home() {
   const formatWritingDate = (ts: number | null) => {
     if (!ts) return 'Recent';
     const d = new Date(ts);
-    return `${d.getDate()}/${d.toLocaleString('en-US', { month: 'short' })}/${d.getFullYear()}`;
+    return `${d.getDate()}/${d.toLocaleString('en-US', {
+      month: 'short',
+    })}/${d.getFullYear()}`;
   };
 
   const mappedBlogs = blogsResult.items.map((w) => ({
@@ -98,7 +109,11 @@ export default async function Home() {
             radius={36}
             optics={GLASS_OPTICS}
           >
-            <Experience companies={mappedCompanies.length > 0 ? mappedCompanies : undefined} />
+            <Experience
+              companies={
+                mappedCompanies.length > 0 ? mappedCompanies : undefined
+              }
+            />
           </Container>
         </div>
 
@@ -108,7 +123,9 @@ export default async function Home() {
             radius={36}
             optics={GLASS_OPTICS}
           >
-            <Writings items={mappedEssays.length > 0 ? mappedEssays : undefined} />
+            <Writings
+              items={mappedEssays.length > 0 ? mappedEssays : undefined}
+            />
           </Container>
         </div>
         <div className="order-4 min-[890px]:order-0 w-full">
@@ -117,7 +134,9 @@ export default async function Home() {
             radius={36}
             optics={GLASS_OPTICS}
           >
-            <PaperShelf items={mappedPapers.length > 0 ? mappedPapers : undefined} />
+            <PaperShelf
+              items={mappedPapers.length > 0 ? mappedPapers : undefined}
+            />
           </Container>
         </div>
       </div>

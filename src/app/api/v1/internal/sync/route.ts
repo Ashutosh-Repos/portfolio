@@ -11,7 +11,9 @@ export async function POST(request: NextRequest) {
     // In production, enforce secret validation
     if (process.env.NODE_ENV === 'production' && cronSecret) {
       if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
-        throw new UnauthorizedError('Invalid or missing synchronization authorization token.');
+        throw new UnauthorizedError(
+          'Invalid or missing synchronization authorization token.',
+        );
       }
     }
 

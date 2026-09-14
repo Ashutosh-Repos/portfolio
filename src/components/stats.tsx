@@ -22,7 +22,32 @@ import LinkPreview from './ui/link-preview';
 import Link from 'next/link';
 import { MAX_GLASS_OPTICS } from '@/lib/glass-config';
 
+export const GITHUB_LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript: '#3178c6',
+  JavaScript: '#f1e05a',
+  Python: '#3572a5',
+  Go: '#00add8',
+  HTML: '#e34c26',
+  'HTML / CSS': '#e34c26',
+  CSS: '#563d7c',
+  Shell: '#89e051',
+  Rust: '#dea584',
+  'C++': '#f34b7d',
+  C: '#555555',
+  Java: '#b07219',
+  Swift: '#f05138',
+  Kotlin: '#a97bff',
+  Dart: '#00b4ab',
+  Ruby: '#701516',
+  PHP: '#4f5d95',
+};
 
+export const getLanguageColor = (
+  name: string,
+  fallbackColor?: string,
+): string => {
+  return GITHUB_LANGUAGE_COLORS[name] || fallbackColor || '#3178c6';
+};
 
 const INITIAL_STATS: GitHubStatsData = {
   user: {
@@ -42,23 +67,21 @@ const INITIAL_STATS: GitHubStatsData = {
     totalCommits: 482,
     mergedPRs: 15,
     closedIssues: 7,
-    totalContributions: 568,
+    totalContributions: 377,
   },
   streak: {
     currentStreak: 0,
     longestStreak: 7,
   },
   languages: [
-    { name: 'TypeScript', percentage: 63, color: '#3178c6', count: 27 },
-    { name: 'JavaScript', percentage: 21, color: '#f7df1e', count: 9 },
+    { name: 'TypeScript', percentage: 64, color: '#3178c6', count: 27 },
+    { name: 'JavaScript', percentage: 19, color: '#f1e05a', count: 8 },
     { name: 'Python', percentage: 7, color: '#3572a5', count: 3 },
     { name: 'HTML', percentage: 5, color: '#e34c26', count: 2 },
     { name: 'Go', percentage: 2, color: '#00add8', count: 1 },
     { name: 'Shell', percentage: 2, color: '#89e051', count: 1 },
   ],
 };
-
-
 
 export interface GithubStatsProps {
   isExpanded?: boolean;
@@ -70,7 +93,8 @@ export const GithubStats = ({
   onToggleExpand,
 }: GithubStatsProps = {}) => {
   const [internalExpanded, setInternalExpanded] = useState(false);
-  const isExpanded = isExpandedProp !== undefined ? isExpandedProp : internalExpanded;
+  const isExpanded =
+    isExpandedProp !== undefined ? isExpandedProp : internalExpanded;
 
   const handleToggle = () => {
     if (onToggleExpand) {
@@ -153,9 +177,13 @@ export const GithubStats = ({
                 color="bg-sky-500"
                 className="w-6 h-6 sm:w-7 sm:h-7 shrink-0"
               />
-              <span className="font-semibold">{stats.impact.followers}</span>
+              <span className="font-semibold">
+                {stats.impact.followers ?? stats.user.followers ?? 1}
+              </span>
               <span className="text-muted-foreground text-[11px] font-sans">
-                {stats.impact.followers === 1 ? 'follower' : 'followers'}
+                {(stats.impact.followers ?? stats.user.followers ?? 1) === 1
+                  ? 'follower'
+                  : 'followers'}
               </span>
             </span>
             <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-700" />
@@ -271,34 +299,43 @@ export const GithubStats = ({
                 </span>
               </div>
               <div className="h-2.5 w-full rounded-full overflow-hidden flex gap-0.5 bg-neutral-200/80 dark:bg-neutral-800/80 p-0.5 mb-3">
-                {stats.languages.map((lang) => (
-                  <div
-                    key={lang.name}
-                    className="h-full rounded-xs transition-all duration-500 hover:brightness-110"
-                    style={{
-                      width: `${lang.percentage}%`,
-                      backgroundColor: lang.color,
-                    }}
-                    title={`${lang.name}: ${lang.percentage}%`}
-                  />
-                ))}
+                {stats.languages.map((lang) => {
+                  const color = getLanguageColor(lang.name, lang.color);
+                  return (
+                    <div
+                      key={lang.name}
+                      className="h-full rounded-xs transition-all duration-500 hover:brightness-110"
+                      style={{
+                        width: `${lang.percentage}%`,
+                        backgroundColor: color,
+                      }}
+                      title={`${lang.name}: ${lang.percentage}%`}
+                    />
+                  );
+                })}
               </div>
 
               <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5">
-                {stats.languages.map((lang) => (
-                  <div key={lang.name} className="flex items-center gap-1.5 text-xs">
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: lang.color }}
-                    />
-                    <span className="text-foreground/90 font-medium">
-                      {lang.name}
-                    </span>
-                    <span className="text-muted-foreground font-mono text-[11px]">
-                      {lang.percentage}%
-                    </span>
-                  </div>
-                ))}
+                {stats.languages.map((lang) => {
+                  const color = getLanguageColor(lang.name, lang.color);
+                  return (
+                    <div
+                      key={lang.name}
+                      className="flex items-center gap-1.5 text-xs"
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="text-foreground/90 font-medium">
+                        {lang.name}
+                      </span>
+                      <span className="text-muted-foreground font-mono text-[11px]">
+                        {lang.percentage}%
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </Container>
 

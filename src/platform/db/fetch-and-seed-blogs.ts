@@ -22,7 +22,10 @@ turndown.addRule('astroCode', {
 
 // Remove Twitter / YouTube widgets or scripts if any
 turndown.addRule('stripWidgets', {
-  filter: (node) => ['script', 'style', 'lite-youtube', 'lite-vimeo'].includes(node.nodeName.toLowerCase()),
+  filter: (node) =>
+    ['script', 'style', 'lite-youtube', 'lite-vimeo'].includes(
+      node.nodeName.toLowerCase(),
+    ),
   replacement: () => '',
 });
 
@@ -69,7 +72,9 @@ function getRandomDateInLast4Years(): number {
   const now = Date.now();
   const fourYearsAgo = now - 4 * 365 * 24 * 60 * 60 * 1000;
   // Pick random timestamp in the range [fourYearsAgo, now - 3 days]
-  return Math.floor(fourYearsAgo + Math.random() * (now - fourYearsAgo - 3 * 86400000));
+  return Math.floor(
+    fourYearsAgo + Math.random() * (now - fourYearsAgo - 3 * 86400000),
+  );
 }
 
 async function fetchBlogData(slug: string) {
@@ -83,7 +88,8 @@ async function fetchBlogData(slug: string) {
     const html = await res.text();
     const $ = cheerio.load(html);
 
-    const title = $('h1.title').text().trim() || $('title').text().split('|')[0].trim();
+    const title =
+      $('h1.title').text().trim() || $('title').text().split('|')[0].trim();
     const excerpt =
       $('meta[name="description"]').attr('content')?.trim() ||
       $('meta[property="og:description"]').attr('content')?.trim() ||
@@ -126,9 +132,15 @@ async function fetchBlogData(slug: string) {
 }
 
 async function fetchAndMergeAcidBlog() {
-  console.log('🔗 Fetching and merging ACID articles (atomicity, consistency, isolation, durability)...');
-  const results = await Promise.all(ACID_SLUGS.map((slug) => fetchBlogData(slug)));
-  const validParts = results.filter((p): p is NonNullable<typeof p> => p !== null);
+  console.log(
+    '🔗 Fetching and merging ACID articles (atomicity, consistency, isolation, durability)...',
+  );
+  const results = await Promise.all(
+    ACID_SLUGS.map((slug) => fetchBlogData(slug)),
+  );
+  const validParts = results.filter(
+    (p): p is NonNullable<typeof p> => p !== null,
+  );
 
   if (validParts.length === 0) return null;
 
@@ -150,25 +162,41 @@ In this comprehensive essay, we explore the four foundational pillars of ACID en
 
 ## 1. Atomicity: The All-or-Nothing Guarantee
 
-${atomicity ? atomicity.markdown : 'Atomicity ensures that all statements within a transaction boundary succeed or none do.'}
+${
+  atomicity
+    ? atomicity.markdown
+    : 'Atomicity ensures that all statements within a transaction boundary succeed or none do.'
+}
 
 ---
 
 ## 2. Consistency: Preserving Invariants
 
-${consistency ? consistency.markdown : 'Consistency guarantees that a transaction transforms the database from one valid state to another.'}
+${
+  consistency
+    ? consistency.markdown
+    : 'Consistency guarantees that a transaction transforms the database from one valid state to another.'
+}
 
 ---
 
 ## 3. Isolation: Concurrency Without Chaos
 
-${isolation ? isolation.markdown : 'Isolation ensures that concurrently executing transactions do not interfere with each other.'}
+${
+  isolation
+    ? isolation.markdown
+    : 'Isolation ensures that concurrently executing transactions do not interfere with each other.'
+}
 
 ---
 
 ## 4. Durability: Surviving Catastrophic Crashes
 
-${durability ? durability.markdown : 'Durability guarantees that once a transaction has committed, its changes will persist permanently.'}
+${
+  durability
+    ? durability.markdown
+    : 'Durability guarantees that once a transaction has committed, its changes will persist permanently.'
+}
 
 ---
 
@@ -182,12 +210,21 @@ While ACID transactions provide clean mental models for developers, scaling ACID
 
   return {
     slug: 'acid',
-    title: 'ACID in Databases: Atomicity, Consistency, Isolation, and Durability',
-    subtitle: 'A comprehensive deep dive into transaction guarantees, failure recovery, and concurrency control',
+    title:
+      'ACID in Databases: Atomicity, Consistency, Isolation, and Durability',
+    subtitle:
+      'A comprehensive deep dive into transaction guarantees, failure recovery, and concurrency control',
     excerpt:
       'ACID guarantees are the cornerstone of database reliability. In this deep dive, we explore Atomicity, Consistency, Isolation, and Durability end-to-end.',
     category: 'Databases',
-    tags: ['Databases', 'ACID', 'Transactions', 'Distributed Systems', 'Concurrency', 'Reliability'],
+    tags: [
+      'Databases',
+      'ACID',
+      'Transactions',
+      'Distributed Systems',
+      'Concurrency',
+      'Reliability',
+    ],
     markdown: combinedMarkdown,
     readingTimeMinutes,
     canonicalUrl: 'https://arpitbhayani.me/blogs/consistency',
@@ -195,7 +232,9 @@ While ACID transactions provide clean mental models for developers, scaling ACID
 }
 
 export async function seedAllArpitBlogs() {
-  console.log(`🚀 Starting fetch and seed for ${BLOG_SLUGS.length + 1} blogs...`);
+  console.log(
+    `🚀 Starting fetch and seed for ${BLOG_SLUGS.length + 1} blogs...`,
+  );
 
   const fetchedBlogs = [];
 
@@ -203,7 +242,11 @@ export async function seedAllArpitBlogs() {
   const batchSize = 5;
   for (let i = 0; i < BLOG_SLUGS.length; i += batchSize) {
     const chunk = BLOG_SLUGS.slice(i, i + batchSize);
-    console.log(`📡 Fetching batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(BLOG_SLUGS.length / batchSize)}: ${chunk.join(', ')}...`);
+    console.log(
+      `📡 Fetching batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(
+        BLOG_SLUGS.length / batchSize,
+      )}: ${chunk.join(', ')}...`,
+    );
     const results = await Promise.all(chunk.map((slug) => fetchBlogData(slug)));
     for (const res of results) {
       if (res) fetchedBlogs.push(res);
@@ -234,11 +277,18 @@ export async function seedAllArpitBlogs() {
     ...b,
     id: `blog-${b.slug}`,
     // Ensure bloom filters and acid are recent, other blogs distributed across 4 years
-    publishedAt: b.slug === 'bloom-filters' ? Date.now() : b.slug === 'acid' ? Date.now() - 5 * 86400000 : getRandomDateInLast4Years(),
+    publishedAt:
+      b.slug === 'bloom-filters'
+        ? Date.now()
+        : b.slug === 'acid'
+        ? Date.now() - 5 * 86400000
+        : getRandomDateInLast4Years(),
     updatedAt: Date.now(),
   }));
 
-  console.log('💾 Writing blogs into SQLite database (both `blog` table and `writing` table)...');
+  console.log(
+    '💾 Writing blogs into SQLite database (both `blog` table and `writing` table)...',
+  );
 
   let insertedCount = 0;
 
@@ -322,7 +372,9 @@ export async function seedAllArpitBlogs() {
     insertedCount++;
   }
 
-  console.log(`🎉 Successfully seeded ${insertedCount} technical blogs into the database!`);
+  console.log(
+    `🎉 Successfully seeded ${insertedCount} technical blogs into the database!`,
+  );
 }
 
 if (require.main === module) {

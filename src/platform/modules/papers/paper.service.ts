@@ -1,7 +1,11 @@
 import { db, schema } from '../../db';
 import { eq, desc, and, sql, like } from 'drizzle-orm';
 import { NotFoundError } from '../../core/errors';
-import { decodeCursor, encodeCursor, type ApiPaginationMeta } from '../../core/pagination';
+import {
+  decodeCursor,
+  encodeCursor,
+  type ApiPaginationMeta,
+} from '../../core/pagination';
 
 export interface PaperDto {
   id: string;
@@ -19,7 +23,12 @@ export interface PaperDto {
   status: string;
   readingTimeMinutes: number;
   tags: string[];
-  citations: Array<{ title: string; url?: string; author?: string; doi?: string }>;
+  citations: Array<{
+    title: string;
+    url?: string;
+    author?: string;
+    doi?: string;
+  }>;
   publishedAt: number | null;
   updatedAt: number;
 }
@@ -30,15 +39,19 @@ export interface PaperListResult {
 }
 
 export class PaperService {
-  async getPapers(options: {
-    venue?: string;
-    year?: number;
-    tag?: string;
-    status?: string;
-    limit?: number;
-    cursor?: string;
-  } = {}): Promise<PaperListResult> {
-    const limit = options.limit ? Math.min(Math.max(options.limit, 1), 100) : 20;
+  async getPapers(
+    options: {
+      venue?: string;
+      year?: number;
+      tag?: string;
+      status?: string;
+      limit?: number;
+      cursor?: string;
+    } = {},
+  ): Promise<PaperListResult> {
+    const limit = options.limit
+      ? Math.min(Math.max(options.limit, 1), 100)
+      : 20;
     const conditions = [];
 
     const targetStatus = options.status || 'published';
@@ -53,14 +66,18 @@ export class PaperService {
     }
 
     if (options.tag) {
-      conditions.push(like(schema.researchPaper.tagsJson, `%"${options.tag}"%`));
+      conditions.push(
+        like(schema.researchPaper.tagsJson, `%"${options.tag}"%`),
+      );
     }
 
     if (options.cursor) {
-      const decoded = decodeCursor<{ publishedAt: number; id: string }>(options.cursor);
+      const decoded = decodeCursor<{ publishedAt: number; id: string }>(
+        options.cursor,
+      );
       if (decoded && decoded.publishedAt) {
         conditions.push(
-          sql`(${schema.researchPaper.publishedAt} < ${decoded.publishedAt} OR (${schema.researchPaper.publishedAt} = ${decoded.publishedAt} AND ${schema.researchPaper.id} < ${decoded.id}))`
+          sql`(${schema.researchPaper.publishedAt} < ${decoded.publishedAt} OR (${schema.researchPaper.publishedAt} = ${decoded.publishedAt} AND ${schema.researchPaper.id} < ${decoded.id}))`,
         );
       }
     }
@@ -69,7 +86,10 @@ export class PaperService {
       .select()
       .from(schema.researchPaper)
       .where(and(...conditions))
-      .orderBy(desc(schema.researchPaper.publishedAt), desc(schema.researchPaper.id))
+      .orderBy(
+        desc(schema.researchPaper.publishedAt),
+        desc(schema.researchPaper.id),
+      )
       .limit(limit + 1);
 
     const hasMore = records.length > limit;
@@ -118,13 +138,16 @@ export class PaperService {
 
   async getPaperBySlug(slugOrTitle: string): Promise<PaperDto> {
     const decoded = decodeURIComponent(slugOrTitle).trim();
-    const normalizedSlug = decoded.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const normalizedSlug = decoded
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
     const records = await db
       .select()
       .from(schema.researchPaper)
       .where(
-        sql`${schema.researchPaper.slug} = ${slugOrTitle} OR ${schema.researchPaper.slug} = ${normalizedSlug} OR LOWER(${schema.researchPaper.title}) = LOWER(${decoded})`
+        sql`${schema.researchPaper.slug} = ${slugOrTitle} OR ${schema.researchPaper.slug} = ${normalizedSlug} OR LOWER(${schema.researchPaper.title}) = LOWER(${decoded})`,
       )
       .limit(1);
 

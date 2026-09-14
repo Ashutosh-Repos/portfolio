@@ -1,11 +1,16 @@
 import type { Metadata } from 'next';
-import { Schibsted_Grotesk, JetBrains_Mono, Alex_Brush } from 'next/font/google';
+import {
+  Schibsted_Grotesk,
+  JetBrains_Mono,
+  Alex_Brush,
+} from 'next/font/google';
 import './globals.css';
 import { Provider } from '@/components/provider';
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 'https://portfolio-3-0-blond.vercel.app',
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      'https://portfolio-3-0-blond.vercel.app',
   ),
   title: {
     default: 'Ashutosh Kumar — Software Engineer & Open-Source Builder',

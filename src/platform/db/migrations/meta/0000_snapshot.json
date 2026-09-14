@@ -53,9 +53,7 @@
       "indexes": {
         "gallery_slug_unique": {
           "name": "gallery_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -64,12 +62,8 @@
           "name": "gallery_cover_media_id_media_item_id_fk",
           "tableFrom": "gallery",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "cover_media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cover_media_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -124,12 +118,8 @@
           "name": "gallery_item_gallery_id_gallery_id_fk",
           "tableFrom": "gallery_item",
           "tableTo": "gallery",
-          "columnsFrom": [
-            "gallery_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gallery_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -137,12 +127,8 @@
           "name": "gallery_item_media_id_media_item_id_fk",
           "tableFrom": "gallery_item",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["media_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -249,9 +235,7 @@
       "indexes": {
         "media_item_storage_key_unique": {
           "name": "media_item_storage_key_unique",
-          "columns": [
-            "storage_key"
-          ],
+          "columns": ["storage_key"],
           "isUnique": true
         }
       },
@@ -313,12 +297,8 @@
           "name": "media_relation_media_id_media_item_id_fk",
           "tableFrom": "media_relation",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["media_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -535,9 +515,7 @@
       "indexes": {
         "education_slug_unique": {
           "name": "education_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -546,12 +524,8 @@
           "name": "education_logo_media_id_media_item_id_fk",
           "tableFrom": "education",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "logo_media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["logo_media_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -559,12 +533,8 @@
           "name": "education_gallery_id_gallery_id_fk",
           "tableFrom": "education",
           "tableTo": "gallery",
-          "columnsFrom": [
-            "gallery_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gallery_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -737,9 +707,7 @@
       "indexes": {
         "experience_slug_unique": {
           "name": "experience_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -748,12 +716,8 @@
           "name": "experience_logo_media_id_media_item_id_fk",
           "tableFrom": "experience",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "logo_media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["logo_media_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -761,12 +725,8 @@
           "name": "experience_gallery_id_gallery_id_fk",
           "tableFrom": "experience",
           "tableTo": "gallery",
-          "columnsFrom": [
-            "gallery_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gallery_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -943,9 +903,7 @@
       "indexes": {
         "github_repo_snapshot_full_name_unique": {
           "name": "github_repo_snapshot_full_name_unique",
-          "columns": [
-            "full_name"
-          ],
+          "columns": ["full_name"],
           "isUnique": true
         }
       },
@@ -1179,9 +1137,7 @@
       "indexes": {
         "project_slug_unique": {
           "name": "project_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -1190,12 +1146,8 @@
           "name": "project_github_repo_id_github_repo_snapshot_id_fk",
           "tableFrom": "project",
           "tableTo": "github_repo_snapshot",
-          "columnsFrom": [
-            "github_repo_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["github_repo_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1203,12 +1155,8 @@
           "name": "project_cover_media_id_media_item_id_fk",
           "tableFrom": "project",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "cover_media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cover_media_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1216,12 +1164,8 @@
           "name": "project_gallery_id_gallery_id_fk",
           "tableFrom": "project",
           "tableTo": "gallery",
-          "columnsFrom": [
-            "gallery_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gallery_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1265,16 +1209,12 @@
       "indexes": {
         "tag_name_unique": {
           "name": "tag_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         },
         "tag_slug_unique": {
           "name": "tag_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -1418,9 +1358,7 @@
       "indexes": {
         "writing_slug_unique": {
           "name": "writing_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -1429,12 +1367,8 @@
           "name": "writing_cover_media_id_media_item_id_fk",
           "tableFrom": "writing",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "cover_media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cover_media_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1442,12 +1376,8 @@
           "name": "writing_gallery_id_gallery_id_fk",
           "tableFrom": "writing",
           "tableTo": "gallery",
-          "columnsFrom": [
-            "gallery_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gallery_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1480,12 +1410,8 @@
           "name": "writing_tag_writing_id_writing_id_fk",
           "tableFrom": "writing_tag",
           "tableTo": "writing",
-          "columnsFrom": [
-            "writing_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["writing_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1493,12 +1419,8 @@
           "name": "writing_tag_tag_id_tag_id_fk",
           "tableFrom": "writing_tag",
           "tableTo": "tag",
-          "columnsFrom": [
-            "tag_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tag_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1585,9 +1507,7 @@
       "indexes": {
         "achievement_slug_unique": {
           "name": "achievement_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -1596,12 +1516,8 @@
           "name": "achievement_media_id_media_item_id_fk",
           "tableFrom": "achievement",
           "tableTo": "media_item",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["media_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1683,9 +1599,7 @@
       "indexes": {
         "skill_slug_unique": {
           "name": "skill_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -1856,9 +1770,7 @@
       "indexes": {
         "media_entry_slug_unique": {
           "name": "media_entry_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -1867,12 +1779,8 @@
           "name": "media_entry_gallery_id_gallery_id_fk",
           "tableFrom": "media_entry",
           "tableTo": "gallery",
-          "columnsFrom": [
-            "gallery_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gallery_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

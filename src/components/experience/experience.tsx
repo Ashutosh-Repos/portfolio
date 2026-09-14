@@ -12,20 +12,20 @@ interface Company {
 
 const defaultCompanies: Company[] = [
   {
-    name: 'InAmigos',
-    role: 'Web Developer',
+    name: 'InAmigos Foundation',
+    role: 'Web Development Intern',
     logo: '/images/inamigossq.jpg',
-    url: 'https://inamigosfoundation.org.in/',
+    url: 'https://drive.google.com/file/d/1SQrXxg3viKmNpgP_BHYK1gy1h07X_2Y6/view?usp=sharing',
     description:
-      "An Indian NGO operating in free education, hunger relief, women's empowerment, animal welfare, and environmental sustainability.",
+      'Web development internship delivering user-facing volunteer portals and backend service routes (Feb 2026 – May 2026).',
   },
   {
     name: 'Cheating Daddy',
-    role: 'Open Source',
+    role: 'Open Source Contributor',
     logo: '/images/cheatingdaddysq.png',
-    url: 'https://cheatingdaddy.com/',
+    url: 'https://github.com/sohzm/cheating-daddy/pull/370',
     description:
-      'Open-source developer utility suite and AI-assisted interview preparation tools.',
+      'Authored Pull Request #370 resolving multi-model migrations and dynamic storage key limits (May 2026 – July 2026).',
   },
 ];
 

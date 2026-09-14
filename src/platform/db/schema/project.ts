@@ -14,7 +14,9 @@ export const project = sqliteTable('project', {
   demoUrl: text('demo_url'),
   packageUrl: text('package_url'),
   githubRepoId: text('github_repo_id').references(() => githubRepoSnapshot.id),
-  overrideGithubData: integer('override_github_data', { mode: 'boolean' }).notNull().default(false),
+  overrideGithubData: integer('override_github_data', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   technologiesJson: text('technologies_json'), // Array of tech tags
   architectureJson: text('architecture_json'), // Array of highlights
   lessonsLearnedMarkdown: text('lessons_learned_markdown'),

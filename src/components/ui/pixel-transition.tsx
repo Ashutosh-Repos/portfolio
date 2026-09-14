@@ -1,5 +1,11 @@
 'use client';
-import React, { useRef, useEffect, useState, useCallback, type CSSProperties } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  type CSSProperties,
+} from 'react';
 import { gsap } from 'gsap';
 import { cn } from '@/lib/utils';
 
@@ -66,58 +72,61 @@ export const PixelTransition: React.FC<PixelTransitionProps> = ({
     }
   }, [gridSize, pixelColor]);
 
-  const animatePixels = useCallback((activate: boolean): void => {
-    const pixelGridEl = pixelGridRef.current;
-    const activeEl = activeRef.current;
-    if (!pixelGridEl || !activeEl) return;
+  const animatePixels = useCallback(
+    (activate: boolean): void => {
+      const pixelGridEl = pixelGridRef.current;
+      const activeEl = activeRef.current;
+      if (!pixelGridEl || !activeEl) return;
 
-    const pixels = pixelGridEl.querySelectorAll<HTMLDivElement>(
-      '.pixelated-image-card__pixel',
-    );
-    if (!pixels.length) {
-      activeEl.style.display = activate ? 'block' : 'none';
-      return;
-    }
+      const pixels = pixelGridEl.querySelectorAll<HTMLDivElement>(
+        '.pixelated-image-card__pixel',
+      );
+      if (!pixels.length) {
+        activeEl.style.display = activate ? 'block' : 'none';
+        return;
+      }
 
-    gsap.killTweensOf(pixels);
-    if (delayedCallRef.current) {
-      delayedCallRef.current.kill();
-    }
+      gsap.killTweensOf(pixels);
+      if (delayedCallRef.current) {
+        delayedCallRef.current.kill();
+      }
 
-    const totalPixels = pixels.length;
-    const staggerStep = animationStepDuration / totalPixels;
+      const totalPixels = pixels.length;
+      const staggerStep = animationStepDuration / totalPixels;
 
-    // Reset pixels
-    gsap.set(pixels, { display: 'none', opacity: 0 });
+      // Reset pixels
+      gsap.set(pixels, { display: 'none', opacity: 0 });
 
-    // Step 1: Pixels flash in randomly across animationStepDuration
-    gsap.to(pixels, {
-      display: 'block',
-      opacity: 1,
-      duration: 0.04,
-      stagger: {
-        each: staggerStep,
-        from: 'random',
-      },
-    });
+      // Step 1: Pixels flash in randomly across animationStepDuration
+      gsap.to(pixels, {
+        display: 'block',
+        opacity: 1,
+        duration: 0.04,
+        stagger: {
+          each: staggerStep,
+          from: 'random',
+        },
+      });
 
-    // Step 2: Switch the underlying content at the transition midpoint
-    delayedCallRef.current = gsap.delayedCall(animationStepDuration, () => {
-      activeEl.style.display = activate ? 'block' : 'none';
-    });
+      // Step 2: Switch the underlying content at the transition midpoint
+      delayedCallRef.current = gsap.delayedCall(animationStepDuration, () => {
+        activeEl.style.display = activate ? 'block' : 'none';
+      });
 
-    // Step 3: Pixels dissolve out randomly, revealing the new content
-    gsap.to(pixels, {
-      display: 'none',
-      opacity: 0,
-      duration: 0.04,
-      delay: animationStepDuration,
-      stagger: {
-        each: staggerStep,
-        from: 'random',
-      },
-    });
-  }, [animationStepDuration]);
+      // Step 3: Pixels dissolve out randomly, revealing the new content
+      gsap.to(pixels, {
+        display: 'none',
+        opacity: 0,
+        duration: 0.04,
+        delay: animationStepDuration,
+        stagger: {
+          each: staggerStep,
+          from: 'random',
+        },
+      });
+    },
+    [animationStepDuration],
+  );
 
   // Controlled mode reaction
   useEffect(() => {

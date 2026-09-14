@@ -37,9 +37,13 @@ async function main() {
   try {
     switch (choice) {
       case '1': {
-        console.log('\n📸 Scanning public asset folders (travel, graduation_time, diploma_time, etc.)...');
+        console.log(
+          '\n📸 Scanning public asset folders (travel, graduation_time, diploma_time, etc.)...',
+        );
         await seedMediaAndGalleries();
-        console.log('✅ Media assets and galleries synchronized successfully!\n');
+        console.log(
+          '✅ Media assets and galleries synchronized successfully!\n',
+        );
         break;
       }
 
@@ -51,10 +55,17 @@ async function main() {
           break;
         }
         const driveUrl = (await rl.question('Google Drive PDF URL: ')).trim();
-        const yearStr = (await rl.question('Publication Year (e.g. 2024): ')).trim();
+        const yearStr = (
+          await rl.question('Publication Year (e.g. 2024): ')
+        ).trim();
         const year = parseInt(yearStr, 10) || new Date().getFullYear();
-        const venue = (await rl.question('Venue / Conference (e.g. OSDI, VLDB, arXiv): ')).trim() || 'Seminal Systems';
-        const summary = (await rl.question('Architectural summary / takeaway: ')).trim() || title;
+        const venue =
+          (
+            await rl.question('Venue / Conference (e.g. OSDI, VLDB, arXiv): ')
+          ).trim() || 'Seminal Systems';
+        const summary =
+          (await rl.question('Architectural summary / takeaway: ')).trim() ||
+          title;
 
         const slug = slugify(title);
         const paperId = `paper-${slug}`;
@@ -129,8 +140,11 @@ async function main() {
           console.log('❌ Title is required.');
           break;
         }
-        const excerpt = (await rl.question('Subtitle / Excerpt: ')).trim() || title;
-        const markdown = (await rl.question('Content Markdown (or short summary): ')).trim() || excerpt;
+        const excerpt =
+          (await rl.question('Subtitle / Excerpt: ')).trim() || title;
+        const markdown =
+          (await rl.question('Content Markdown (or short summary): ')).trim() ||
+          excerpt;
         const slug = slugify(title);
         const id = `essay-${slug}`;
 
@@ -142,12 +156,17 @@ async function main() {
             title,
             subtitle: excerpt,
             excerpt,
-            contentMarkdown: markdown.startsWith('#') ? markdown : `# ${title}\n\n${markdown}`,
+            contentMarkdown: markdown.startsWith('#')
+              ? markdown
+              : `# ${title}\n\n${markdown}`,
             type: 'essay',
             status: 'published',
             publishedAt: now,
             updatedAt: now,
-            readingTimeMinutes: Math.max(2, Math.round(markdown.split(/\s+/).length / 200)),
+            readingTimeMinutes: Math.max(
+              2,
+              Math.round(markdown.split(/\s+/).length / 200),
+            ),
             canonicalUrl: `https://portfolio-3-0-blond.vercel.app/writings/${slug}`,
             tagsJson: JSON.stringify(['Personal Essay', 'Design & Craft']),
           })
@@ -168,8 +187,11 @@ async function main() {
           console.log('❌ Title is required.');
           break;
         }
-        const excerpt = (await rl.question('Summary / Excerpt: ')).trim() || title;
-        const markdown = (await rl.question('Blog Markdown (or paste content): ')).trim() || excerpt;
+        const excerpt =
+          (await rl.question('Summary / Excerpt: ')).trim() || title;
+        const markdown =
+          (await rl.question('Blog Markdown (or paste content): ')).trim() ||
+          excerpt;
         const slug = slugify(title);
         const id = `blog-${slug}`;
 
@@ -182,9 +204,14 @@ async function main() {
             title,
             excerpt,
             canonicalUrl: `https://portfolio-3-0-blond.vercel.app/blogs/${slug}`,
-            readingTimeMinutes: Math.max(3, Math.round(markdown.split(/\s+/).length / 200)),
+            readingTimeMinutes: Math.max(
+              3,
+              Math.round(markdown.split(/\s+/).length / 200),
+            ),
             tagsJson: JSON.stringify(['Technical Blog', 'Engineering']),
-            contentMarkdown: markdown.startsWith('#') ? markdown : `# ${title}\n\n${markdown}`,
+            contentMarkdown: markdown.startsWith('#')
+              ? markdown
+              : `# ${title}\n\n${markdown}`,
             publishedAt: now,
             updatedAt: now,
           })
@@ -202,12 +229,17 @@ async function main() {
             title,
             subtitle: excerpt,
             excerpt,
-            contentMarkdown: markdown.startsWith('#') ? markdown : `# ${title}\n\n${markdown}`,
+            contentMarkdown: markdown.startsWith('#')
+              ? markdown
+              : `# ${title}\n\n${markdown}`,
             type: 'blog_post',
             status: 'published',
             publishedAt: now,
             updatedAt: now,
-            readingTimeMinutes: Math.max(3, Math.round(markdown.split(/\s+/).length / 200)),
+            readingTimeMinutes: Math.max(
+              3,
+              Math.round(markdown.split(/\s+/).length / 200),
+            ),
             canonicalUrl: `https://portfolio-3-0-blond.vercel.app/blogs/${slug}`,
             tagsJson: JSON.stringify(['Technical Blog', 'Engineering']),
           })
@@ -225,8 +257,12 @@ async function main() {
         console.log('\n💼 Add / Update Work Experience');
         const company = (await rl.question('Company Name: ')).trim();
         const role = (await rl.question('Role (e.g. Backend Intern): ')).trim();
-        const startDate = (await rl.question('Start Date (e.g. 2026-05): ')).trim();
-        const endDate = (await rl.question('End Date (leave blank if Present): ')).trim() || null;
+        const startDate = (
+          await rl.question('Start Date (e.g. 2026-05): ')
+        ).trim();
+        const endDate =
+          (await rl.question('End Date (leave blank if Present): ')).trim() ||
+          null;
         const description = (await rl.question('Summary description: ')).trim();
 
         const slug = slugify(company);
@@ -256,18 +292,31 @@ async function main() {
           })
           .onConflictDoUpdate({
             target: schema.experience.id,
-            set: { role, startDate, endDate, isCurrent: !endDate, description, updatedAt: now },
+            set: {
+              role,
+              startDate,
+              endDate,
+              isCurrent: !endDate,
+              description,
+              updatedAt: now,
+            },
           });
 
-        console.log(`\n✅ Experience saved! Visible at http://localhost:3000/about`);
+        console.log(
+          `\n✅ Experience saved! Visible at http://localhost:3000/about`,
+        );
         break;
       }
 
       case '6': {
         console.log('\n🎓 Add / Update Education');
         const institution = (await rl.question('Institution Name: ')).trim();
-        const degree = (await rl.question('Degree (e.g. B.Tech, Diploma): ')).trim();
-        const fieldOfStudy = (await rl.question('Field of Study (e.g. Computer Science): ')).trim();
+        const degree = (
+          await rl.question('Degree (e.g. B.Tech, Diploma): ')
+        ).trim();
+        const fieldOfStudy = (
+          await rl.question('Field of Study (e.g. Computer Science): ')
+        ).trim();
         const gradeOrCgpa = (await rl.question('CGPA / Percentage: ')).trim();
         const startDate = (await rl.question('Start Year: ')).trim();
         const endDate = (await rl.question('End Year (or Present): ')).trim();
@@ -289,7 +338,9 @@ async function main() {
             endDate,
             isCurrent: endDate.toLowerCase().includes('present'),
             description: `${degree} in ${fieldOfStudy} from ${institution}.`,
-            highlightsJson: JSON.stringify([`${degree} in ${fieldOfStudy} (${startDate} - ${endDate})`]),
+            highlightsJson: JSON.stringify([
+              `${degree} in ${fieldOfStudy} (${startDate} - ${endDate})`,
+            ]),
             linksJson: JSON.stringify([]),
             sortOrder: 1,
             createdAt: now,
@@ -297,20 +348,35 @@ async function main() {
           })
           .onConflictDoUpdate({
             target: schema.education.id,
-            set: { institution, degree, fieldOfStudy, gradeOrCgpa, startDate, endDate, updatedAt: now },
+            set: {
+              institution,
+              degree,
+              fieldOfStudy,
+              gradeOrCgpa,
+              startDate,
+              endDate,
+              updatedAt: now,
+            },
           });
 
-        console.log(`\n✅ Education saved! Visible at http://localhost:3000/about`);
+        console.log(
+          `\n✅ Education saved! Visible at http://localhost:3000/about`,
+        );
         break;
       }
 
       case '7': {
         console.log('\n⚡ Add Technical Skill');
-        const name = (await rl.question('Skill Name (e.g. Rust, Kafka, Kubernetes): ')).trim();
-        console.log('Categories: languages, networking, frameworks, databases, cloud_infra, ai_ml, tools');
+        const name = (
+          await rl.question('Skill Name (e.g. Rust, Kafka, Kubernetes): ')
+        ).trim();
+        console.log(
+          'Categories: languages, networking, frameworks, databases, cloud_infra, ai_ml, tools',
+        );
         const category = (await rl.question('Category: ')).trim() || 'tools';
         console.log('Tiers: master, proficient, familiar');
-        const tier = (await rl.question('Proficiency Tier: ')).trim() || 'proficient';
+        const tier =
+          (await rl.question('Proficiency Tier: ')).trim() || 'proficient';
 
         const slug = slugify(name);
         const id = `skill-${slug}`;
@@ -341,10 +407,19 @@ async function main() {
         console.log('\n🎬 Add Movie or Web Series');
         const title = (await rl.question('Title: ')).trim();
         console.log('Type: movie or tv_series');
-        const type = (await rl.question('Type (movie / tv_series): ')).trim().toLowerCase() === 'tv_series' ? 'tv_series' : 'movie';
-        const year = parseInt((await rl.question('Release Year: ')).trim(), 10) || new Date().getFullYear();
-        const rating = parseFloat((await rl.question('Rating (1-10): ')).trim()) || 9.0;
-        const review = (await rl.question('Your personal review / note: ')).trim() || title;
+        const type =
+          (await rl.question('Type (movie / tv_series): '))
+            .trim()
+            .toLowerCase() === 'tv_series'
+            ? 'tv_series'
+            : 'movie';
+        const year =
+          parseInt((await rl.question('Release Year: ')).trim(), 10) ||
+          new Date().getFullYear();
+        const rating =
+          parseFloat((await rl.question('Rating (1-10): ')).trim()) || 9.0;
+        const review =
+          (await rl.question('Your personal review / note: ')).trim() || title;
 
         const slug = slugify(title);
         const id = `${type}-${slug}`;
@@ -371,17 +446,28 @@ async function main() {
           })
           .onConflictDoUpdate({
             target: schema.mediaEntry.id,
-            set: { title, releaseYear: year, myRating: rating, personalReview: review, updatedAt: now },
+            set: {
+              title,
+              releaseYear: year,
+              myRating: rating,
+              personalReview: review,
+              updatedAt: now,
+            },
           });
 
-        const targetUrl = type === 'movie' ? 'http://localhost:3000/about/hobbies/movies' : 'http://localhost:3000/about/hobbies/webseries';
+        const targetUrl =
+          type === 'movie'
+            ? 'http://localhost:3000/about/hobbies/movies'
+            : 'http://localhost:3000/about/hobbies/webseries';
         console.log(`\n✅ ${type === 'movie' ? 'Movie' : 'Web Series'} added!`);
         console.log(`🔗 Visible at: ${targetUrl}`);
         break;
       }
 
       case '9': {
-        console.log('\n🔄 Running full synchronization & purge of legacy placeholders...');
+        console.log(
+          '\n🔄 Running full synchronization & purge of legacy placeholders...',
+        );
         await cleanAndSyncAll();
         console.log('✅ Full synchronization complete! Zero inconsistencies.');
         break;

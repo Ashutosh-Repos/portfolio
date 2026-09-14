@@ -4,6 +4,7 @@ export interface ProjectItem {
   stars: number;
   forks: number;
   url: string;
+  demoUrl?: string;
   language?: string;
   isPinned?: boolean;
 }
@@ -14,29 +15,33 @@ const GITHUB_USERNAME = 'Ashutosh-Repos';
 const REPO_DESCRIPTIONS: Record<string, string> = {
   Tessera:
     'Multi-Region Distributed Video Transcoding & HLS/DASH Packaging Engine in Go (Consistent Hash Ring, S3 Ingress, NATS, Redis Sharding)',
+  Bunly:
+    'High-performance, feature-rich Video-On-Demand (VOD) streaming platform with adaptive bitrate streaming',
+  Post: 'Minimalist social media platform built for sharing thoughts and updates with modern reactive UI',
+  'video-encoder':
+    'Multithreaded video processing engine with Next.js, FFmpeg & HLS streaming for rapid parallel transcoding',
+  'macbook-usb-tethering':
+    'Low-level USB tethering driver and network interface utility crafted in C for high-throughput connectivity on macOS',
+  WeatherNow:
+    'Real-time weather forecast and interactive conditions dashboard with location search and telemetry visualization',
   Chatify:
     'Realtime chat platform using WebSockets, Next.js, Prisma, PostgreSQL, & Zustand',
-  Bunly:
-    'High-performance, feature-rich Video-On-Demand (VOD) streaming platform',
-  'video-encoder':
-    'Multithreaded video processing engine with Next.js, FFmpeg & HLS streaming',
   ShellGreets:
     'Smart, motivational greeting theme for terminal with dynamic day progress bar',
-  Post: 'Minimalist social media platform built for sharing thoughts and updates',
   'Finance-Dashboard-UI':
-    'Modern financial analytics dashboard UI with data visualization',
-  'macbook-usb-tethering':
-    'USB tethering driver & kernel extension utility for macOS',
-  WeatherNow:
-    'Real-time weather forecast and interactive conditions dashboard',
+    'Modern financial analytics dashboard UI with data visualization and transaction tracking',
+  'Heart-Disease-Prediction':
+    'Machine learning diagnostic tool evaluating clinical indicators to predict cardiovascular risks',
   VidtubeBackend:
     'Scalable video platform backend architecture with Node.js & MongoDB',
   'hls-server':
-    'Lightweight HTTP Live Streaming (HLS) server for video distribution',
+    'Lightweight HTTP Live Streaming (HLS) server for video segment distribution',
+  ShAI: 'AI-Powered CLI Assistant translating natural language into safe shell commands (Ink, React, SQLite, Ollama, Claude, OpenAI)',
 };
 
-/** Default fallback projects (100% original, zero forks) */
+/** Default fallback projects (Strictly authentic GitHub data) */
 export const DEFAULT_PROJECTS: ProjectItem[] = [
+  // 6 Authentic Pinned Repositories First
   {
     name: 'Tessera',
     description: REPO_DESCRIPTIONS['Tessera'],
@@ -45,15 +50,6 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
     url: 'https://github.com/Ashutosh-Repos/Tessera',
     language: 'Go',
     isPinned: true,
-  },
-  {
-    name: 'Chatify',
-    description: REPO_DESCRIPTIONS['Chatify'],
-    stars: 1,
-    forks: 0,
-    url: 'https://github.com/Ashutosh-Repos/Chatify',
-    language: 'TypeScript',
-    isPinned: false,
   },
   {
     name: 'Bunly',
@@ -65,31 +61,54 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
     isPinned: true,
   },
   {
-    name: 'video-encoder',
-    description: REPO_DESCRIPTIONS['video-encoder'],
-    stars: 0,
-    forks: 0,
-    url: 'https://github.com/Ashutosh-Repos/video-encoder',
-    language: 'TypeScript',
-    isPinned: true,
-  },
-  {
-    name: 'ShellGreets',
-    description: REPO_DESCRIPTIONS['ShellGreets'],
-    stars: 0,
-    forks: 0,
-    url: 'https://github.com/Ashutosh-Repos/ShellGreets',
-    language: 'Shell',
-    isPinned: false,
-  },
-  {
     name: 'Post',
     description: REPO_DESCRIPTIONS['Post'],
     stars: 0,
     forks: 0,
     url: 'https://github.com/Ashutosh-Repos/Post',
+    demoUrl: 'https://post-kohl-six.vercel.app',
     language: 'TypeScript',
     isPinned: true,
+  },
+  {
+    name: 'video-encoder',
+    description: REPO_DESCRIPTIONS['video-encoder'],
+    stars: 0,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/video-encoder',
+    demoUrl: 'https://video-encoder-psi.vercel.app',
+    language: 'TypeScript',
+    isPinned: true,
+  },
+  {
+    name: 'macbook-usb-tethering',
+    description: REPO_DESCRIPTIONS['macbook-usb-tethering'],
+    stars: 0,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/macbook-usb-tethering',
+    language: 'C',
+    isPinned: true,
+  },
+  {
+    name: 'WeatherNow',
+    description: REPO_DESCRIPTIONS['WeatherNow'],
+    stars: 0,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/WeatherNow',
+    demoUrl: 'https://weather-now-gules-xi.vercel.app',
+    language: 'JavaScript',
+    isPinned: true,
+  },
+
+  // Other Authentic Public Repositories
+  {
+    name: 'Chatify',
+    description: REPO_DESCRIPTIONS['Chatify'],
+    stars: 1,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/Chatify',
+    language: 'TypeScript',
+    isPinned: false,
   },
   {
     name: 'Finance-Dashboard-UI',
@@ -101,31 +120,91 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
     isPinned: false,
   },
   {
-    name: 'macbook-usb-tethering',
-    description: REPO_DESCRIPTIONS['macbook-usb-tethering'],
+    name: 'Heart-Disease-Prediction',
+    description: REPO_DESCRIPTIONS['Heart-Disease-Prediction'],
+    stars: 1,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/Heart-Disease-Prediction',
+    language: 'TypeScript',
+    isPinned: false,
+  },
+  {
+    name: 'hls-server',
+    description: REPO_DESCRIPTIONS['hls-server'],
+    stars: 1,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/hls-server',
+    language: 'TypeScript',
+    isPinned: false,
+  },
+  {
+    name: 'ShAI',
+    description: REPO_DESCRIPTIONS['ShAI'],
+    stars: 1,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/ShAI',
+    demoUrl: 'https://www.npmjs.com/package/shai-shell',
+    language: 'TypeScript',
+    isPinned: false,
+  },
+  {
+    name: 'VidtubeBackend',
+    description: REPO_DESCRIPTIONS['VidtubeBackend'],
+    stars: 1,
+    forks: 0,
+    url: 'https://github.com/Ashutosh-Repos/VidtubeBackend',
+    language: 'JavaScript',
+    isPinned: false,
+  },
+  {
+    name: 'ShellGreets',
+    description: REPO_DESCRIPTIONS['ShellGreets'],
     stars: 0,
     forks: 0,
-    url: 'https://github.com/Ashutosh-Repos/macbook-usb-tethering',
-    language: 'C',
-    isPinned: true,
+    url: 'https://github.com/Ashutosh-Repos/ShellGreets',
+    language: 'Shell',
+    isPinned: false,
   },
 ];
 
-/** Fetch dynamic public pinned & original projects from GitHub */
+/** Fetch dynamic public pinned & original projects */
 import { projectService } from '@/platform/modules/project/project.service';
 
-export async function getPublicProjects(limit = 8): Promise<ProjectItem[]> {
-  // 1. Primary path: Fast local database projects (0ms latency, enriched case studies)
+export interface GetProjectsOptions {
+  limit?: number;
+  pinnedOnly?: boolean;
+}
+
+export async function getPublicProjects(
+  optionsOrLimit: number | GetProjectsOptions = 8,
+): Promise<ProjectItem[]> {
+  const options: GetProjectsOptions =
+    typeof optionsOrLimit === 'number'
+      ? { limit: optionsOrLimit }
+      : optionsOrLimit;
+
+  const limit = options.limit ?? 8;
+  const pinnedOnly = Boolean(options.pinnedOnly);
+
+  // 1. Primary path: Fast local database projects (Strategy 1: 0ms latency, zero rate limits)
   try {
-    const dbProjects = await projectService.getProjects({ limit });
+    const dbProjects = await projectService.getProjects({
+      limit,
+      featuredOnly: pinnedOnly,
+    });
+
     if (dbProjects.length > 0) {
       return dbProjects.map((p) => ({
         name: p.title,
         description: p.description,
-        stars: p.github?.stars ?? (DEFAULT_PROJECTS.find(dp => dp.name.toLowerCase() === p.title.toLowerCase())?.stars ?? 1),
+        stars: p.github?.stars ?? (p.title === 'Tessera' ? 1 : 0),
         forks: p.github?.forks ?? 0,
-        url: p.demoUrl || p.github?.repoUrl || `https://github.com/${GITHUB_USERNAME}/${p.slug}`,
-        language: p.technologies[0] || p.github?.primaryLanguage || 'TypeScript',
+        url:
+          p.github?.repoUrl ||
+          `https://github.com/${GITHUB_USERNAME}/${p.slug}`,
+        demoUrl: p.demoUrl || undefined,
+        language:
+          p.technologies[0] || p.github?.primaryLanguage || 'TypeScript',
         isPinned: p.featuredPriority !== null,
       }));
     }
@@ -133,6 +212,7 @@ export async function getPublicProjects(limit = 8): Promise<ProjectItem[]> {
     // Fallback to GitHub API / static defaults
   }
 
+  // 2. Fallback path: Direct GitHub API with caching
   try {
     const headers: Record<string, string> = {
       Accept: 'application/vnd.github.v3+json',
@@ -142,44 +222,35 @@ export async function getPublicProjects(limit = 8): Promise<ProjectItem[]> {
       headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
     }
 
-    // 1. Fetch pinned repo names from GitHub profile HTML
-    let pinnedNames: string[] = [];
+    // 2a. Extract pinned repo names
+    let pinnedNames: string[] = [
+      'Tessera',
+      'Bunly',
+      'Post',
+      'video-encoder',
+      'macbook-usb-tethering',
+      'WeatherNow',
+    ];
+
     try {
-      const profileRes = await fetch(
-        `https://github.com/${GITHUB_USERNAME}`,
-        {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
-          signal: AbortSignal.timeout(3500),
-          next: { revalidate: 3600 },
-        },
-      );
+      const profileRes = await fetch(`https://github.com/${GITHUB_USERNAME}`, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        signal: AbortSignal.timeout(3500),
+        next: { revalidate: 3600 },
+      });
       if (profileRes.ok) {
         const html = await profileRes.text();
-        const matches = html.matchAll(
-          new RegExp(`href="/${GITHUB_USERNAME}/([^/"]+)"[^>]*class="[^"]*repo[^"]*"`, 'g'),
-        );
-        pinnedNames = Array.from(matches, (m) => m[1]);
-        if (pinnedNames.length === 0) {
-          // Fallback regex for pinned list
-          const pinnedBlocks = html.match(
-            /class="[^"]*pinned-item-list-item[^"]*"[\s\S]*?<\/li>/g,
-          );
-          if (pinnedBlocks) {
-            pinnedNames = pinnedBlocks
-              .map((b) => {
-                const m = b.match(new RegExp(`href="/${GITHUB_USERNAME}/([^/"]+)"`));
-                return m ? m[1] : '';
-              })
-              .filter(Boolean);
-          }
+        const matches = html.matchAll(/class="repo">([^<]+)<\/span>/g);
+        const parsed = Array.from(matches, (m) => m[1]?.trim()).filter(Boolean);
+        if (parsed.length > 0) {
+          pinnedNames = parsed;
         }
       }
     } catch {
-      // Pinned fetch fallback to default pinned list
-      pinnedNames = ['Tessera', 'Bunly', 'Post', 'video-encoder', 'macbook-usb-tethering', 'WeatherNow'];
+      // use default pinned list
     }
 
-    // 2. Fetch all public repositories to filter original (non-forked)
+    // 2b. Fetch public repos
     const reposRes = await fetch(
       `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=pushed`,
       {
@@ -190,25 +261,34 @@ export async function getPublicProjects(limit = 8): Promise<ProjectItem[]> {
     );
 
     if (!reposRes.ok) {
-      return DEFAULT_PROJECTS.slice(0, limit);
+      const base = pinnedOnly
+        ? DEFAULT_PROJECTS.filter((p) => p.isPinned)
+        : DEFAULT_PROJECTS;
+      return base.slice(0, limit);
     }
 
     const allRepos = await reposRes.json();
     if (!Array.isArray(allRepos)) {
-      return DEFAULT_PROJECTS.slice(0, limit);
+      const base = pinnedOnly
+        ? DEFAULT_PROJECTS.filter((p) => p.isPinned)
+        : DEFAULT_PROJECTS;
+      return base.slice(0, limit);
     }
 
-    // Strictly exclude all forks from other sources!
+    // Strictly exclude all external forks
     const originalRepos = allRepos.filter((r) => !r.fork);
 
-    // Map into ProjectItem with curated descriptions
+    // Map into ProjectItem with curated descriptions & demo URLs
     const projectMap = new Map<string, ProjectItem>();
     for (const r of originalRepos) {
       const isPinned = pinnedNames.includes(r.name);
+      if (pinnedOnly && !isPinned) continue;
+
+      const fallbackMatch = DEFAULT_PROJECTS.find((p) => p.name === r.name);
       const description =
         r.description?.trim() ||
         REPO_DESCRIPTIONS[r.name] ||
-        DEFAULT_PROJECTS.find((p) => p.name === r.name)?.description ||
+        fallbackMatch?.description ||
         '';
 
       projectMap.set(r.name, {
@@ -217,12 +297,13 @@ export async function getPublicProjects(limit = 8): Promise<ProjectItem[]> {
         stars: r.stargazers_count ?? 0,
         forks: r.forks_count ?? 0,
         url: r.html_url,
-        language: r.language ?? undefined,
+        demoUrl: r.homepage || fallbackMatch?.demoUrl || undefined,
+        language: r.language ?? fallbackMatch?.language ?? undefined,
         isPinned,
       });
     }
 
-    // Prioritize pinned non-forked repos first, then sort remaining by stars & recency
+    // Prioritize pinned non-forked repos first
     const pinnedProjects: ProjectItem[] = [];
     for (const name of pinnedNames) {
       const p = projectMap.get(name);
@@ -231,14 +312,23 @@ export async function getPublicProjects(limit = 8): Promise<ProjectItem[]> {
       }
     }
 
+    if (pinnedOnly) {
+      return pinnedProjects.slice(0, limit);
+    }
+
     const remainingProjects = Array.from(projectMap.values())
       .filter((p) => !pinnedNames.includes(p.name))
       .sort((a, b) => b.stars - a.stars);
 
     const combined = [...pinnedProjects, ...remainingProjects];
 
-    return combined.length > 0 ? combined.slice(0, limit) : DEFAULT_PROJECTS.slice(0, limit);
+    return combined.length > 0
+      ? combined.slice(0, limit)
+      : DEFAULT_PROJECTS.slice(0, limit);
   } catch {
-    return DEFAULT_PROJECTS.slice(0, limit);
+    const base = pinnedOnly
+      ? DEFAULT_PROJECTS.filter((p) => p.isPinned)
+      : DEFAULT_PROJECTS;
+    return base.slice(0, limit);
   }
 }

@@ -37,10 +37,6 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
   }
 
   return (
-    <ArticleView
-      sectionLabel="Blogs"
-      sectionHref="/blogs"
-      article={article}
-    />
+    <ArticleView sectionLabel="Blogs" sectionHref="/blogs" article={article} />
   );
 }

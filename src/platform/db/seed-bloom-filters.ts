@@ -5,17 +5,26 @@ export const BLOOM_FILTER_ARTICLE = {
   id: 'blog-bloom-filters',
   slug: 'bloom-filters',
   title: 'Bloom Filters',
-  subtitle: 'Probabilistic data structures for fast, memory-efficient membership testing',
-  excerpt: 'A Bloom filter is a probabilistic data structure that answers a very specific question - have I seen this thing before? - while using almost no memory.',
+  subtitle:
+    'Probabilistic data structures for fast, memory-efficient membership testing',
+  excerpt:
+    'A Bloom filter is a probabilistic data structure that answers a very specific question - have I seen this thing before? - while using almost no memory.',
   type: 'blog',
   status: 'published',
   readingTimeMinutes: 12,
   canonicalUrl: 'https://arpitbhayani.me/blogs/bloom-filters',
   coverImageUrl: null,
-  tags: ['Algorithms', 'Data Structures', 'Distributed Systems', 'Databases', 'Probabilistic Data Structures'],
+  tags: [
+    'Algorithms',
+    'Data Structures',
+    'Distributed Systems',
+    'Databases',
+    'Probabilistic Data Structures',
+  ],
   citations: [
     {
-      title: 'Kirsch and Mitzenmacher - Less Hashing, Same Performance: Building a Better Bloom Filter',
+      title:
+        'Kirsch and Mitzenmacher - Less Hashing, Same Performance: Building a Better Bloom Filter',
       url: 'https://www.eecs.harvard.edu/~michaelm/postscripts/esa2006a.pdf',
     },
     {
@@ -445,7 +454,9 @@ export async function insertBloomFilterArticle() {
   const existing = await db
     .select()
     .from(schema.writing)
-    .where(sql`${schema.writing.slug} = ${BLOOM_FILTER_ARTICLE.slug} OR ${schema.writing.id} = ${BLOOM_FILTER_ARTICLE.id}`)
+    .where(
+      sql`${schema.writing.slug} = ${BLOOM_FILTER_ARTICLE.slug} OR ${schema.writing.id} = ${BLOOM_FILTER_ARTICLE.id}`,
+    )
     .limit(1);
 
   if (existing.length > 0) {
@@ -456,11 +467,11 @@ export async function insertBloomFilterArticle() {
         id: existing[0].id,
       })
       .where(sql`${schema.writing.id} = ${existing[0].id}`);
-    console.log(`✅ Updated existing Bloom Filters article (id: ${existing[0].id})`);
+    console.log(
+      `✅ Updated existing Bloom Filters article (id: ${existing[0].id})`,
+    );
   } else {
-    await db
-      .insert(schema.writing)
-      .values(record);
+    await db.insert(schema.writing).values(record);
     console.log(`✅ Inserted Bloom Filters article into database!`);
   }
 }

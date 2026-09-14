@@ -11,7 +11,9 @@ export const education = sqliteTable('education', {
   location: text('location'),
   startDate: text('start_date').notNull(), // ISO YYYY-MM or YYYY
   endDate: text('end_date'),
-  isCurrent: integer('is_current', { mode: 'boolean' }).notNull().default(false),
+  isCurrent: integer('is_current', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   description: text('description'),
   highlightsJson: text('highlights_json'), // Array of string or structured achievement points
   linksJson: text('links_json'), // Array of { title, url, type }

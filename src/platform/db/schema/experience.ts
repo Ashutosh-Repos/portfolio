@@ -11,7 +11,9 @@ export const experience = sqliteTable('experience', {
   locationType: text('location_type').notNull().default('remote'), // 'remote' | 'hybrid' | 'on_site'
   startDate: text('start_date').notNull(),
   endDate: text('end_date'),
-  isCurrent: integer('is_current', { mode: 'boolean' }).notNull().default(false),
+  isCurrent: integer('is_current', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   description: text('description'),
   responsibilitiesJson: text('responsibilities_json'), // Array of responsibility bullet points
   achievementsJson: text('achievements_json'), // Array of achievement bullet points

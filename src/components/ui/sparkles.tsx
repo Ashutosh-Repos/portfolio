@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useId, useEffect, useRef, useSyncExternalStore, useMemo } from 'react';
+import React, {
+  useId,
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+  useMemo,
+} from 'react';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 
@@ -43,7 +49,11 @@ export const SparklesCore: React.FC<SparklesCoreProps> = ({
   const rawId = useId();
   const generatedId = id || `sparkles-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const { resolvedTheme } = useTheme();
-  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   const effectiveParticleColor = useMemo(() => {
     if (particleColor) return particleColor;

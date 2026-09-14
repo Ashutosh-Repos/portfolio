@@ -9,7 +9,9 @@ export const skill = sqliteTable('skill', {
   proficiencyTier: text('proficiency_tier').notNull().default('proficient'), // 'master' | 'proficient' | 'familiar'
   yearsOfExperience: integer('years_of_experience'),
   iconSlug: text('icon_slug'),
-  isFeatured: integer('is_featured', { mode: 'boolean' }).notNull().default(false),
+  isFeatured: integer('is_featured', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   sortOrder: integer('sort_order').notNull().default(0),
 });
 

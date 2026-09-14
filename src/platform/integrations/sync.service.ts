@@ -1,10 +1,12 @@
 import { db, schema } from '../db';
-import { eq } from 'drizzle-orm';
+import { eq, notInArray, sql } from 'drizzle-orm';
 import { githubAdapter } from './github/github.adapter';
 import { leetCodeAdapter } from './leetcode/leetcode.adapter';
 
 export class SyncService {
-  async syncGitHub(username = 'Ashutosh-Repos'): Promise<{ success: boolean; reposCount: number; error?: string }> {
+  async syncGitHub(
+    username = 'Ashutosh-Repos',
+  ): Promise<{ success: boolean; reposCount: number; error?: string }> {
     const providerKey = 'github';
     const now = Date.now();
 
@@ -32,6 +34,30 @@ export class SyncService {
           },
         });
 
+      const validRepoIds = normalized.repositories.map((r) => r.id);
+
+      // Clean out any stale repository snapshots not in GitHub
+      if (validRepoIds.length > 0) {
+        // Delete stale projects first to respect foreign key constraint
+        const staleProjects = await db
+          .select({
+            id: schema.project.id,
+            githubRepoId: schema.project.githubRepoId,
+          })
+          .from(schema.project)
+          .where(notInArray(schema.project.githubRepoId, validRepoIds));
+
+        for (const sp of staleProjects) {
+          if (sp.githubRepoId) {
+            await db.delete(schema.project).where(eq(schema.project.id, sp.id));
+          }
+        }
+
+        await db
+          .delete(schema.githubRepoSnapshot)
+          .where(notInArray(schema.githubRepoSnapshot.id, validRepoIds));
+      }
+
       // Upsert individual repo snapshots
       for (const repo of normalized.repositories) {
         await db
@@ -57,17 +83,94 @@ export class SyncService {
           .onConflictDoUpdate({
             target: schema.githubRepoSnapshot.id,
             set: {
+              name: repo.name,
+              fullName: repo.fullName,
+              description: repo.description,
               stars: repo.stars,
               forks: repo.forks,
               openIssues: repo.openIssues,
               primaryLanguage: repo.primaryLanguage,
               languagesJson: JSON.stringify(repo.languages),
               latestCommitAt: repo.latestCommitAt,
+              isPinned: repo.isPinned,
               repoUrl: repo.repoUrl,
+              homepageUrl: repo.homepageUrl,
               topicsJson: JSON.stringify(repo.topics),
               syncedAt: now,
             },
           });
+      }
+
+      // Pinned priority ordering
+      const PINNED_ORDER: Record<string, number> = {
+        Tessera: 1,
+        Bunly: 2,
+        Post: 3,
+        'video-encoder': 4,
+        'macbook-usb-tethering': 5,
+        WeatherNow: 6,
+      };
+
+      // Synchronize project entities from authentic GitHub repositories
+      const existingProjects = await db.select().from(schema.project);
+      const projectByRepoId = new Map(
+        existingProjects
+          .filter((p) => p.githubRepoId)
+          .map((p) => [p.githubRepoId as string, p]),
+      );
+      const projectBySlug = new Map(
+        existingProjects.map((p) => [p.slug.toLowerCase(), p]),
+      );
+
+      for (let i = 0; i < normalized.repositories.length; i++) {
+        const repo = normalized.repositories[i];
+        const repoSlug = repo.name.toLowerCase();
+        const existing =
+          projectByRepoId.get(repo.id) || projectBySlug.get(repoSlug);
+        const featuredPriority = PINNED_ORDER[repo.name] || null;
+
+        if (existing) {
+          await db
+            .update(schema.project)
+            .set({
+              title: repo.name,
+              featuredPriority,
+              demoUrl: repo.homepageUrl || existing.demoUrl || repo.repoUrl,
+              githubRepoId: repo.id,
+              technologiesJson: JSON.stringify(
+                repo.primaryLanguage
+                  ? [repo.primaryLanguage, ...repo.topics]
+                  : repo.topics,
+              ),
+              updatedAt: now,
+            })
+            .where(eq(schema.project.id, existing.id));
+        } else {
+          await db.insert(schema.project).values({
+            id: `proj-${repoSlug}`,
+            slug: repoSlug,
+            title: repo.name,
+            tagline: repo.description || `${repo.name} open-source project`,
+            description:
+              repo.description || `${repo.name} repository by Ashutosh.`,
+            status: 'completed',
+            featuredPriority,
+            demoUrl: repo.homepageUrl || repo.repoUrl,
+            packageUrl: null,
+            githubRepoId: repo.id,
+            technologiesJson: JSON.stringify(
+              repo.primaryLanguage
+                ? [repo.primaryLanguage, ...repo.topics]
+                : repo.topics,
+            ),
+            architectureJson: JSON.stringify(['Open-Source System']),
+            coverImageUrl: null,
+            galleryId: null,
+            sortOrder: featuredPriority ? featuredPriority : 10 + i,
+            createdAt: repo.latestCommitAt || now,
+            updatedAt: now,
+          });
+        }
       }
 
       await this.setProviderStatus(providerKey, 'success', null, now);
@@ -79,7 +182,9 @@ export class SyncService {
     }
   }
 
-  async syncLeetCode(username = 'ashutosh0406'): Promise<{ success: boolean; error?: string }> {
+  async syncLeetCode(
+    username = 'ashutosh0406',
+  ): Promise<{ success: boolean; error?: string }> {
     const providerKey = 'leetcode';
     const now = Date.now();
 
@@ -125,12 +230,20 @@ export class SyncService {
     ]);
 
     return {
-      github: githubResult.status === 'fulfilled' ? githubResult.value : { success: false, error: githubResult.reason },
-      leetcode: leetCodeResult.status === 'fulfilled' ? leetCodeResult.value : { success: false, error: leetCodeResult.reason },
+      github:
+        githubResult.status === 'fulfilled'
+          ? githubResult.value
+          : { success: false, error: githubResult.reason },
+      leetcode:
+        leetCodeResult.status === 'fulfilled'
+          ? leetCodeResult.value
+          : { success: false, error: leetCodeResult.reason },
     };
   }
 
-  async getSnapshot<T>(id: string): Promise<{ data: T | null; syncedAt: number | null }> {
+  async getSnapshot<T>(
+    id: string,
+  ): Promise<{ data: T | null; syncedAt: number | null }> {
     const records = await db
       .select()
       .from(schema.externalActivitySnapshot)
@@ -155,7 +268,7 @@ export class SyncService {
     providerKey: string,
     status: 'idle' | 'running' | 'success' | 'error',
     lastError: string | null = null,
-    lastSyncedAt?: number
+    lastSyncedAt?: number,
   ): Promise<void> {
     const updateValues: {
       syncStatus: 'idle' | 'running' | 'success' | 'error';
@@ -170,7 +283,8 @@ export class SyncService {
       .values({
         providerKey,
         displayName: providerKey === 'github' ? 'GitHub' : 'LeetCode',
-        accountIdentifier: providerKey === 'github' ? 'Ashutosh-Repos' : 'ashutosh0406',
+        accountIdentifier:
+          providerKey === 'github' ? 'Ashutosh-Repos' : 'ashutosh0406',
         syncStatus: status,
         lastError,
         lastSyncedAt: lastSyncedAt || null,

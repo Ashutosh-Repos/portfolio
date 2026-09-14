@@ -1,7 +1,11 @@
 import { db, schema } from '../../db';
 import { eq, desc, and, sql, like } from 'drizzle-orm';
 import { NotFoundError } from '../../core/errors';
-import { decodeCursor, encodeCursor, type ApiPaginationMeta } from '../../core/pagination';
+import {
+  decodeCursor,
+  encodeCursor,
+  type ApiPaginationMeta,
+} from '../../core/pagination';
 
 export interface WritingDto {
   id: string;
@@ -18,7 +22,12 @@ export interface WritingDto {
   canonicalUrl: string | null;
   coverImageUrl: string | null;
   galleryId: string | null;
-  citations: Array<{ title: string; url?: string; author?: string; doi?: string }>;
+  citations: Array<{
+    title: string;
+    url?: string;
+    author?: string;
+    doi?: string;
+  }>;
   tags: string[];
 }
 
@@ -28,14 +37,18 @@ export interface WritingListResult {
 }
 
 export class WritingService {
-  async getWritings(options: {
-    type?: string;
-    tag?: string;
-    status?: string;
-    limit?: number;
-    cursor?: string;
-  } = {}): Promise<WritingListResult> {
-    const limit = options.limit ? Math.min(Math.max(options.limit, 1), 100) : 20;
+  async getWritings(
+    options: {
+      type?: string;
+      tag?: string;
+      status?: string;
+      limit?: number;
+      cursor?: string;
+    } = {},
+  ): Promise<WritingListResult> {
+    const limit = options.limit
+      ? Math.min(Math.max(options.limit, 1), 100)
+      : 20;
     const conditions = [];
 
     // Default to published unless requested otherwise
@@ -52,10 +65,12 @@ export class WritingService {
 
     // Cursor pagination (keyset based on publishedAt + id)
     if (options.cursor) {
-      const decoded = decodeCursor<{ publishedAt: number; id: string }>(options.cursor);
+      const decoded = decodeCursor<{ publishedAt: number; id: string }>(
+        options.cursor,
+      );
       if (decoded && decoded.publishedAt) {
         conditions.push(
-          sql`(${schema.writing.publishedAt} < ${decoded.publishedAt} OR (${schema.writing.publishedAt} = ${decoded.publishedAt} AND ${schema.writing.id} < ${decoded.id}))`
+          sql`(${schema.writing.publishedAt} < ${decoded.publishedAt} OR (${schema.writing.publishedAt} = ${decoded.publishedAt} AND ${schema.writing.id} < ${decoded.id}))`,
         );
       }
     }
@@ -110,12 +125,18 @@ export class WritingService {
     };
   }
 
-  async getWritingBySlug(slugOrTitle: string, expectedType?: string): Promise<WritingDto> {
+  async getWritingBySlug(
+    slugOrTitle: string,
+    expectedType?: string,
+  ): Promise<WritingDto> {
     const decoded = decodeURIComponent(slugOrTitle).trim();
-    const normalizedSlug = decoded.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const normalizedSlug = decoded
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
     const conditions = [
-      sql`(${schema.writing.slug} = ${slugOrTitle} OR ${schema.writing.slug} = ${normalizedSlug} OR LOWER(${schema.writing.title}) = LOWER(${decoded}))`
+      sql`(${schema.writing.slug} = ${slugOrTitle} OR ${schema.writing.slug} = ${normalizedSlug} OR LOWER(${schema.writing.title}) = LOWER(${decoded}))`,
     ];
 
     if (expectedType) {

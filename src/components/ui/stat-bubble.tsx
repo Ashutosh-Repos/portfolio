@@ -39,7 +39,9 @@ export const StatBubble = ({
       ) : Icon ? (
         <span className="relative inline-flex items-center justify-center w-full h-full p-1">
           <Icon className="w-full h-full text-black z-2 stroke-2" />
-          <span className={`absolute w-full h-full ${color} rounded-full z-1`} />
+          <span
+            className={`absolute w-full h-full ${color} rounded-full z-1`}
+          />
         </span>
       ) : null
     }

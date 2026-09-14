@@ -12,7 +12,7 @@ export const integrationProvider = sqliteTable('integration_provider', {
 });
 
 export const githubRepoSnapshot = sqliteTable('github_repo_snapshot', {
-  id: text('id').primaryKey(), // Owner/repo e.g. 'Ashutosh-Repos/portfolio_v2'
+  id: text('id').primaryKey(), // Owner/repo e.g. 'Ashutosh-Repos/Tessera'
   name: text('name').notNull(),
   fullName: text('full_name').notNull().unique(),
   description: text('description'),
@@ -30,10 +30,13 @@ export const githubRepoSnapshot = sqliteTable('github_repo_snapshot', {
   syncedAt: integer('synced_at').notNull(),
 });
 
-export const externalActivitySnapshot = sqliteTable('external_activity_snapshot', {
-  id: text('id').primaryKey(), // e.g. 'leetcode_overview' or 'github_overview'
-  provider: text('provider').notNull(), // 'github' | 'leetcode'
-  metricType: text('metric_type').notNull(), // 'overview' | 'heatmap' | 'contest'
-  payloadJson: text('payload_json').notNull(), // Normalized snapshot data
-  syncedAt: integer('synced_at').notNull(),
-});
+export const externalActivitySnapshot = sqliteTable(
+  'external_activity_snapshot',
+  {
+    id: text('id').primaryKey(), // e.g. 'leetcode_overview' or 'github_overview'
+    provider: text('provider').notNull(), // 'github' | 'leetcode'
+    metricType: text('metric_type').notNull(), // 'overview' | 'heatmap' | 'contest'
+    payloadJson: text('payload_json').notNull(), // Normalized snapshot data
+    syncedAt: integer('synced_at').notNull(),
+  },
+);

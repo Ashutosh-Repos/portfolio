@@ -66,7 +66,7 @@ const DEFAULT_STATS: GitHubStatsData = {
     totalCommits: 482,
     mergedPRs: 15,
     closedIssues: 7,
-    totalContributions: 568,
+    totalContributions: 377,
   },
   streak: {
     currentStreak: 0,
@@ -89,11 +89,14 @@ const GITHUB_USERNAME = 'Ashutosh-Repos';
 export async function GET() {
   // 1. Primary path: Fast local database snapshot (0ms latency, zero external rate limit)
   try {
-    const snapshot = await syncService.getSnapshot<GitHubStatsData>('github_overview');
+    const snapshot = await syncService.getSnapshot<GitHubStatsData>(
+      'github_overview',
+    );
     if (snapshot.data) {
       return NextResponse.json(snapshot.data, {
         headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Cache-Control':
+            'public, s-maxage=3600, stale-while-revalidate=86400',
         },
       });
     }
@@ -121,24 +124,22 @@ export async function GET() {
     ) => {
       return fetch(url, {
         headers: { ...headers, ...customHeaders },
-        signal: AbortSignal.timeout(4000),
+        signal: AbortSignal.timeout(5000),
         next: { revalidate: 3600 },
       });
     };
 
-    // Parallel fetch basic profile, repos, and streak
-    const [userRes, reposRes, streakRes] = await Promise.allSettled([
+    // Parallel fetch basic profile, repos, and direct GitHub contributions calendar
+    const [userRes, reposRes, contribRes] = await Promise.allSettled([
       fetchWithTimeout(`https://api.github.com/users/${GITHUB_USERNAME}`),
       fetchWithTimeout(
         `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`,
       ),
-      fetch(
-        `https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USERNAME}&type=json`,
-        {
-          signal: AbortSignal.timeout(4000),
-          next: { revalidate: 3600 },
-        },
-      ),
+      fetch(`https://github.com/users/${GITHUB_USERNAME}/contributions`, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        signal: AbortSignal.timeout(5000),
+        next: { revalidate: 3600 },
+      }),
     ]);
 
     // Handle user profile
@@ -203,17 +204,58 @@ export async function GET() {
       }
     }
 
-    // Handle streak
-    if (streakRes.status === 'fulfilled' && streakRes.value.ok) {
-      const streakData = await streakRes.value.json();
-      if (streakData?.totalContributions) {
-        stats.activity.totalContributions = streakData.totalContributions;
+    // Handle authentic contributions count and streak directly from GitHub calendar
+    if (contribRes.status === 'fulfilled' && contribRes.value.ok) {
+      const contribHtml = await contribRes.value.text();
+      const match = contribHtml.match(
+        /([0-9,]+)\s+contributions\s+in\s+(the\s+last\s+year|[0-9]{4})/i,
+      );
+      if (match) {
+        stats.activity.totalContributions = parseInt(
+          match[1].replace(/,/g, ''),
+          10,
+        );
       }
-      if (streakData?.longestStreak?.length !== undefined) {
-        stats.streak.longestStreak = streakData.longestStreak.length;
+
+      const dayRegex =
+        /data-date=\"([0-9]{4}-[0-9]{2}-[0-9]{2})\"[^>]*data-level=\"([0-9]+)\"/g;
+      const days: Array<{ date: string; level: number }> = [];
+      let m;
+      while ((m = dayRegex.exec(contribHtml)) !== null) {
+        days.push({ date: m[1], level: parseInt(m[2], 10) });
       }
-      if (streakData?.currentStreak?.length !== undefined) {
-        stats.streak.currentStreak = streakData.currentStreak.length;
+      days.sort((a, b) => a.date.localeCompare(b.date));
+
+      if (days.length > 0) {
+        let maxStreak = 0;
+        let runningStreak = 0;
+        for (const d of days) {
+          if (d.level > 0) {
+            runningStreak++;
+            if (runningStreak > maxStreak) maxStreak = runningStreak;
+          } else {
+            runningStreak = 0;
+          }
+        }
+        stats.streak.longestStreak = maxStreak;
+
+        const rev = [...days].reverse();
+        const todayActive = rev[0]?.level > 0;
+        const yesterdayActive = rev[1]?.level > 0;
+        if (todayActive || yesterdayActive) {
+          let curr = 0;
+          const startIndex = todayActive ? 0 : 1;
+          for (let i = startIndex; i < rev.length; i++) {
+            if (rev[i].level > 0) {
+              curr++;
+            } else {
+              break;
+            }
+          }
+          stats.streak.currentStreak = curr;
+        } else {
+          stats.streak.currentStreak = 0;
+        }
       }
     }
 

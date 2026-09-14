@@ -3,7 +3,7 @@ import { handleSuccess, handleError } from '@/platform/core/http';
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const { slug } = await params;

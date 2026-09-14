@@ -47,7 +47,9 @@ export class EducationService {
       .orderBy(asc(schema.education.sortOrder));
 
     const galleryMap = new Map<string, EducationGalleryDto>();
-    const galleryIds = records.map((r) => r.galleryId).filter(Boolean) as string[];
+    const galleryIds = records
+      .map((r) => r.galleryId)
+      .filter(Boolean) as string[];
 
     if (galleryIds.length > 0) {
       const galleries = await db.select().from(schema.gallery);
@@ -62,7 +64,10 @@ export class EducationService {
             height: schema.mediaItem.height,
           })
           .from(schema.galleryItem)
-          .innerJoin(schema.mediaItem, eq(schema.galleryItem.mediaId, schema.mediaItem.id))
+          .innerJoin(
+            schema.mediaItem,
+            eq(schema.galleryItem.mediaId, schema.mediaItem.id),
+          )
           .where(eq(schema.galleryItem.galleryId, g.id))
           .orderBy(asc(schema.galleryItem.sortOrder));
 

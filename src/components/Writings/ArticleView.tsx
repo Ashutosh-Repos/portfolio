@@ -11,7 +11,12 @@ export interface BaseArticle {
   publishedAt?: number | null;
   readingTimeMinutes?: number | null;
   tags?: string[];
-  citations?: Array<{ title: string; url?: string; author?: string; doi?: string }>;
+  citations?: Array<{
+    title: string;
+    url?: string;
+    author?: string;
+    doi?: string;
+  }>;
   canonicalUrl?: string | null;
   paperUrl?: string | null;
 }
@@ -22,7 +27,11 @@ export interface ArticleViewProps {
   article: BaseArticle;
 }
 
-export const ArticleView = ({ sectionLabel, sectionHref, article }: ArticleViewProps) => {
+export const ArticleView = ({
+  sectionLabel,
+  sectionHref,
+  article,
+}: ArticleViewProps) => {
   const formattedDate = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString('en-US', {
         month: 'short',
@@ -37,16 +46,24 @@ export const ArticleView = ({ sectionLabel, sectionHref, article }: ArticleViewP
   return (
     <div className="w-full max-w-3xl mx-auto flex flex-col gap-6 pt-4 pb-20">
       {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb" className="text-xs font-mono text-foreground/50 flex items-center gap-1.5 flex-wrap">
+      <nav
+        aria-label="Breadcrumb"
+        className="text-xs font-mono text-foreground/50 flex items-center gap-1.5 flex-wrap"
+      >
         <Link href="/" className="hover:text-foreground transition-colors">
           Home
         </Link>
         <span>/</span>
-        <Link href={sectionHref} className="text-foreground/70 hover:text-foreground transition-colors">
+        <Link
+          href={sectionHref}
+          className="text-foreground/70 hover:text-foreground transition-colors"
+        >
           {sectionLabel}
         </Link>
         <span>/</span>
-        <span className="text-foreground truncate max-w-[200px] sm:max-w-xs">{article.title}</span>
+        <span className="text-foreground truncate max-w-[200px] sm:max-w-xs">
+          {article.title}
+        </span>
       </nav>
 
       {/* Article Header */}
@@ -123,7 +140,11 @@ export const ArticleView = ({ sectionLabel, sectionHref, article }: ArticleViewP
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all duration-200"
             >
-              <span>{article.paperUrl ? '📄 Read Original Paper PDF' : '🔗 Canonical Source'}</span>
+              <span>
+                {article.paperUrl
+                  ? '📄 Read Original Paper PDF'
+                  : '🔗 Canonical Source'}
+              </span>
               <span>&nearr;</span>
             </a>
           </div>
@@ -141,7 +162,9 @@ export const ArticleView = ({ sectionLabel, sectionHref, article }: ArticleViewP
             <ul className="flex flex-col gap-2 text-sm">
               {article.citations.map((cite, idx) => (
                 <li key={idx} className="flex items-baseline gap-2">
-                  <span className="font-mono text-xs text-foreground/40 shrink-0">[{idx + 1}]</span>
+                  <span className="font-mono text-xs text-foreground/40 shrink-0">
+                    [{idx + 1}]
+                  </span>
                   {cite.url ? (
                     <a
                       href={cite.url}

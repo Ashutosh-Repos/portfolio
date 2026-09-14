@@ -13,24 +13,34 @@ export const Projects = async () => {
   }> = [];
 
   try {
-    const dbProjects = await projectService.getProjects({ limit: 7 });
+    // Strategy 1: Fetch strictly the 6 pinned repositories (0ms local DB query)
+    const dbProjects = await projectService.getProjects({
+      featuredOnly: true,
+      limit: 6,
+    });
     if (dbProjects && dbProjects.length > 0) {
       projectList = dbProjects.map((p) => ({
         name: p.title,
-        url: p.demoUrl || p.github?.repoUrl || `https://github.com/Ashutosh-Repos/${p.slug}`,
-        stars: p.github?.stars ?? 0,
+        url:
+          p.demoUrl ||
+          p.github?.repoUrl ||
+          `https://github.com/Ashutosh-Repos/${p.slug}`,
+        stars: p.github?.stars ?? (p.title === 'Tessera' ? 1 : 0),
         description: p.description,
       }));
     }
   } catch {
-    // fallback
+    // fallback to pinned fetch
   }
 
   if (projectList.length === 0) {
-    const fallbackProjects = await getPublicProjects(7);
+    const fallbackProjects = await getPublicProjects({
+      pinnedOnly: true,
+      limit: 6,
+    });
     projectList = fallbackProjects.map((p) => ({
       name: p.name,
-      url: p.url,
+      url: p.demoUrl || p.url,
       stars: p.stars,
       description: p.description,
     }));
@@ -58,7 +68,8 @@ export const Projects = async () => {
 
       {/* Subtitle matching writing/paperself/blogs */}
       <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
-        Here are some of the open-source projects I&apos;ve built and maintained.
+        Here are some of the open-source projects I&apos;ve built and
+        maintained.
       </p>
 
       {/* Projects List inspired by Arpit Bhayani with GitHub stars */}

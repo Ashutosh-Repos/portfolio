@@ -102,7 +102,15 @@ export class TravelService {
 
     // Hydrate galleries and photos
     const galleries = await db.select().from(schema.gallery);
-    const galleryMap = new Map<string, { id: string; title: string; description: string | null; items: TravelPhotoDto[] }>();
+    const galleryMap = new Map<
+      string,
+      {
+        id: string;
+        title: string;
+        description: string | null;
+        items: TravelPhotoDto[];
+      }
+    >();
 
     for (const g of galleries) {
       const items = await db
@@ -113,7 +121,10 @@ export class TravelService {
           altText: schema.mediaItem.altText,
         })
         .from(schema.galleryItem)
-        .innerJoin(schema.mediaItem, eq(schema.galleryItem.mediaId, schema.mediaItem.id))
+        .innerJoin(
+          schema.mediaItem,
+          eq(schema.galleryItem.mediaId, schema.mediaItem.id),
+        )
         .where(eq(schema.galleryItem.galleryId, g.id))
         .orderBy(asc(schema.galleryItem.sortOrder));
 

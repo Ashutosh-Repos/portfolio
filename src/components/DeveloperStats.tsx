@@ -7,8 +7,6 @@ import { GithubStats } from './stats';
 import { LeetCodeStats } from './leetcode';
 import { GLASS_OPTICS } from '@/lib/glass-config';
 
-
-
 export const DeveloperStats = () => {
   const [isGithubExpanded, setIsGithubExpanded] = useState(false);
   const [isLeetCodeExpanded, setIsLeetCodeExpanded] = useState(false);

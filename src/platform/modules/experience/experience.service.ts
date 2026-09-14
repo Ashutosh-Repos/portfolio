@@ -33,7 +33,9 @@ export class ExperienceService {
 
     const query = db.select().from(schema.experience);
     const records = await (conditions.length > 0
-      ? query.where(and(...conditions)).orderBy(asc(schema.experience.sortOrder))
+      ? query
+          .where(and(...conditions))
+          .orderBy(asc(schema.experience.sortOrder))
       : query.orderBy(asc(schema.experience.sortOrder)));
 
     return records.map((item) => ({
@@ -48,9 +50,15 @@ export class ExperienceService {
       endDate: item.endDate,
       isCurrent: Boolean(item.isCurrent),
       description: item.description,
-      responsibilities: item.responsibilitiesJson ? JSON.parse(item.responsibilitiesJson) : [],
-      achievements: item.achievementsJson ? JSON.parse(item.achievementsJson) : [],
-      technologies: item.technologiesJson ? JSON.parse(item.technologiesJson) : [],
+      responsibilities: item.responsibilitiesJson
+        ? JSON.parse(item.responsibilitiesJson)
+        : [],
+      achievements: item.achievementsJson
+        ? JSON.parse(item.achievementsJson)
+        : [],
+      technologies: item.technologiesJson
+        ? JSON.parse(item.technologiesJson)
+        : [],
       storyMarkdown: item.storyMarkdown,
       companyUrl: item.companyUrl,
       logoUrl: item.logoUrl,
@@ -83,9 +91,15 @@ export class ExperienceService {
       endDate: item.endDate,
       isCurrent: Boolean(item.isCurrent),
       description: item.description,
-      responsibilities: item.responsibilitiesJson ? JSON.parse(item.responsibilitiesJson) : [],
-      achievements: item.achievementsJson ? JSON.parse(item.achievementsJson) : [],
-      technologies: item.technologiesJson ? JSON.parse(item.technologiesJson) : [],
+      responsibilities: item.responsibilitiesJson
+        ? JSON.parse(item.responsibilitiesJson)
+        : [],
+      achievements: item.achievementsJson
+        ? JSON.parse(item.achievementsJson)
+        : [],
+      technologies: item.technologiesJson
+        ? JSON.parse(item.technologiesJson)
+        : [],
       storyMarkdown: item.storyMarkdown,
       companyUrl: item.companyUrl,
       logoUrl: item.logoUrl,

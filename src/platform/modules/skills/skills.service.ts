@@ -25,7 +25,9 @@ export interface AchievementDto {
 }
 
 export class SkillsService {
-  async getSkills(options: { category?: string; featuredOnly?: boolean } = {}): Promise<SkillDto[]> {
+  async getSkills(
+    options: { category?: string; featuredOnly?: boolean } = {},
+  ): Promise<SkillDto[]> {
     const conditions = [];
     if (options.category) {
       conditions.push(eq(schema.skill.category, options.category));
@@ -55,7 +57,9 @@ export class SkillsService {
   async getAchievements(category?: string): Promise<AchievementDto[]> {
     const query = db.select().from(schema.achievement);
     const records = await (category
-      ? query.where(eq(schema.achievement.category, category)).orderBy(asc(schema.achievement.sortOrder))
+      ? query
+          .where(eq(schema.achievement.category, category))
+          .orderBy(asc(schema.achievement.sortOrder))
       : query.orderBy(asc(schema.achievement.sortOrder)));
 
     return records.map((item) => ({

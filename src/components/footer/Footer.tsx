@@ -5,14 +5,13 @@ export default function Footer() {
   return (
     <footer className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center py-8 px-4 border-t border-black/8 dark:border-white/10 select-none">
       {/* Signature in Alex Brush */}
-     
-        <span
-          className="text-4xl sm:text-5xl text-neutral-800 dark:text-neutral-100 tracking-wide inline-block drop-shadow-sm transition-transform duration-300 hover:scale-105 cursor-default select-none"
-          style={{ fontFamily: 'var(--font-alex-brush), cursive' }}
-        >
-          Ashutosh
-        </span>
-     
+
+      <span
+        className="text-4xl sm:text-5xl text-neutral-800 dark:text-neutral-100 tracking-wide inline-block drop-shadow-sm transition-transform duration-300 hover:scale-105 cursor-default select-none"
+        style={{ fontFamily: 'var(--font-alex-brush), cursive' }}
+      >
+        Ashutosh
+      </span>
 
       {/* Inspirations line */}
       <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mt-2 max-w-lg">

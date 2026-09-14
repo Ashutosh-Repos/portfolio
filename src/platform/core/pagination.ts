@@ -29,13 +29,19 @@ export interface PaginationParams {
   page?: number;
 }
 
-export function parsePaginationParams(searchParams: URLSearchParams): PaginationParams {
+export function parsePaginationParams(
+  searchParams: URLSearchParams,
+): PaginationParams {
   const limitParam = searchParams.get('limit');
   const cursor = searchParams.get('cursor') || undefined;
   const pageParam = searchParams.get('page');
 
-  const limit = limitParam ? Math.min(Math.max(parseInt(limitParam, 10) || 20, 1), 100) : 20;
-  const page = pageParam ? Math.max(parseInt(pageParam, 10) || 1, 1) : undefined;
+  const limit = limitParam
+    ? Math.min(Math.max(parseInt(limitParam, 10) || 20, 1), 100)
+    : 20;
+  const page = pageParam
+    ? Math.max(parseInt(pageParam, 10) || 1, 1)
+    : undefined;
 
   return { limit, cursor, page };
 }
@@ -44,7 +50,9 @@ export function encodeCursor(payload: Record<string, unknown>): string {
   return Buffer.from(JSON.stringify(payload)).toString('base64url');
 }
 
-export function decodeCursor<T = Record<string, unknown>>(cursor: string): T | null {
+export function decodeCursor<T = Record<string, unknown>>(
+  cursor: string,
+): T | null {
   try {
     const raw = Buffer.from(cursor, 'base64url').toString('utf-8');
     return JSON.parse(raw) as T;
@@ -55,7 +63,7 @@ export function decodeCursor<T = Record<string, unknown>>(cursor: string): T | n
 
 export function createSuccessResponse<T>(
   data: T,
-  meta?: ApiPaginationMeta
+  meta?: ApiPaginationMeta,
 ): ApiResponse<T> {
   return {
     success: true,
@@ -68,7 +76,7 @@ export function createErrorResponse(
   message: string,
   code = 'INTERNAL_ERROR',
   statusCode = 500,
-  details?: unknown
+  details?: unknown,
 ): ApiResponse<never> {
   return {
     success: false,

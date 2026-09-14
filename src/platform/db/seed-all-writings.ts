@@ -18,7 +18,7 @@ export async function seedAllWritings() {
     const item = essays[i];
     const id = `essay-${item.slug}`;
     // Stagger dates realistically in 2024–2026
-    const publishedAt = now - (i * 86400000 * 20);
+    const publishedAt = now - i * 86400000 * 20;
 
     const record = {
       id,
@@ -37,7 +37,13 @@ export async function seedAllWritings() {
       coverMediaId: null,
       galleryId: null,
       citationsJson: JSON.stringify([]),
-      tagsJson: JSON.stringify(['Essays', 'Design', 'Craft', 'Outcomes', 'Philosophy']),
+      tagsJson: JSON.stringify([
+        'Essays',
+        'Design',
+        'Craft',
+        'Outcomes',
+        'Philosophy',
+      ]),
     };
 
     await db
@@ -60,5 +66,7 @@ export async function seedAllWritings() {
     count++;
   }
 
-  console.log(`✅ Successfully seeded ${count} authentic personal essays into schema.writing!`);
+  console.log(
+    `✅ Successfully seeded ${count} authentic personal essays into schema.writing!`,
+  );
 }

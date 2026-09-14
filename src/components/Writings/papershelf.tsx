@@ -34,7 +34,8 @@ const defaultWritings: PaperItem[] = [
   },
   {
     date: '18/Sep/2023',
-    title: 'Firecracker: Lightweight virtualization for serverless applications',
+    title:
+      'Firecracker: Lightweight virtualization for serverless applications',
     slug: 'firecracker-lightweight-virtualization-for-serverless-applications',
   },
   {
@@ -44,7 +45,11 @@ const defaultWritings: PaperItem[] = [
   },
 ];
 
-export const PaperShelf = ({ items = defaultWritings }: { items?: PaperItem[] }) => {
+export const PaperShelf = ({
+  items = defaultWritings,
+}: {
+  items?: PaperItem[];
+}) => {
   const displayItems = items.length > 0 ? items : defaultWritings;
 
   return (
@@ -66,14 +71,17 @@ export const PaperShelf = ({ items = defaultWritings }: { items?: PaperItem[] })
         </LinkPreview>
       </div>
       <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
-        Architectural breakdowns and takeaways from foundational systems and AI papers.
+        Architectural breakdowns and takeaways from foundational systems and AI
+        papers.
       </p>
       <ul className="pt-3 grid grid-cols-1 min-[460px]:grid-cols-2 min-[890px]:grid-cols-1 gap-x-6 gap-y-2.5">
         {displayItems.map((writing) => (
           <li key={writing.title} className="flex items-baseline gap-2 min-w-0">
             <span className="text-xs text-foreground/40 shrink-0">-</span>
             <LinkPreview
-              url={`/papershelf/${encodeURIComponent(writing.slug || writing.title)}`}
+              url={`/papershelf/${encodeURIComponent(
+                writing.slug || writing.title,
+              )}`}
               multiline={true}
               dotGap={6}
               dotSize={2}

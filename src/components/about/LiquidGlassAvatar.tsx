@@ -96,12 +96,7 @@ export const InteractiveLiquidGlassBubble: React.FC<
     contentClassName?: string;
     overlayClassName?: string;
   }
-> = ({
-  background,
-  className,
-  contentClassName,
-  overlayClassName,
-}) => {
+> = ({ background, className, contentClassName, overlayClassName }) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div

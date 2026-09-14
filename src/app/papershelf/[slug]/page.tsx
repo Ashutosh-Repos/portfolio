@@ -31,9 +31,9 @@ export default async function PaperDetailPage({ params }: PaperPageProps) {
 
   let article;
   try {
-    article = await writingService.getWritingBySlug(slug, 'research_paper').catch(() =>
-      writingService.getWritingBySlug(slug)
-    );
+    article = await writingService
+      .getWritingBySlug(slug, 'research_paper')
+      .catch(() => writingService.getWritingBySlug(slug));
   } catch {
     notFound();
   }

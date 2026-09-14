@@ -8,7 +8,12 @@ export class DomainError extends Error {
   public readonly statusCode: number;
   public readonly details?: unknown;
 
-  constructor(message: string, code = 'INTERNAL_ERROR', statusCode = 500, details?: unknown) {
+  constructor(
+    message: string,
+    code = 'INTERNAL_ERROR',
+    statusCode = 500,
+    details?: unknown,
+  ) {
     super(message);
     this.name = this.constructor.name;
     this.code = code;
@@ -20,9 +25,11 @@ export class DomainError extends Error {
 export class NotFoundError extends DomainError {
   constructor(resource: string, identifier?: string) {
     super(
-      identifier ? `${resource} with identifier '${identifier}' was not found.` : `${resource} not found.`,
+      identifier
+        ? `${resource} with identifier '${identifier}' was not found.`
+        : `${resource} not found.`,
       'RESOURCE_NOT_FOUND',
-      404
+      404,
     );
   }
 }
@@ -47,6 +54,11 @@ export class ForbiddenError extends DomainError {
 
 export class ExternalProviderError extends DomainError {
   constructor(provider: string, message: string, details?: unknown) {
-    super(`External provider '${provider}' failed: ${message}`, 'PROVIDER_ERROR', 502, details);
+    super(
+      `External provider '${provider}' failed: ${message}`,
+      'PROVIDER_ERROR',
+      502,
+      details,
+    );
   }
 }

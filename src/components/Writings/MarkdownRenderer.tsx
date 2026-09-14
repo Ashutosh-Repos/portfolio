@@ -22,9 +22,13 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
             );
           },
           h2({ children }) {
-            const id = typeof children === 'string'
-              ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-              : undefined;
+            const id =
+              typeof children === 'string'
+                ? children
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '')
+                : undefined;
 
             return (
               <h2
@@ -61,12 +65,20 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
 
           // Paragraphs
           p({ children }) {
-            return <p className="leading-relaxed text-foreground/85 text-base sm:text-[17px]">{children}</p>;
+            return (
+              <p className="leading-relaxed text-foreground/85 text-base sm:text-[17px]">
+                {children}
+              </p>
+            );
           },
 
           // Strong / Bold
           strong({ children }) {
-            return <strong className="font-semibold text-foreground">{children}</strong>;
+            return (
+              <strong className="font-semibold text-foreground">
+                {children}
+              </strong>
+            );
           },
 
           // Emphasis / Italic
@@ -85,10 +97,18 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
 
           // Lists
           ul({ children }) {
-            return <ul className="list-disc list-outside ml-6 space-y-2 text-foreground/85">{children}</ul>;
+            return (
+              <ul className="list-disc list-outside ml-6 space-y-2 text-foreground/85">
+                {children}
+              </ul>
+            );
           },
           ol({ children }) {
-            return <ol className="list-decimal list-outside ml-6 space-y-2 text-foreground/85">{children}</ol>;
+            return (
+              <ol className="list-decimal list-outside ml-6 space-y-2 text-foreground/85">
+                {children}
+              </ol>
+            );
           },
           li({ children }) {
             return <li className="leading-relaxed pl-1">{children}</li>;
@@ -140,24 +160,46 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
             );
           },
           thead({ children }) {
-            return <thead className="bg-foreground/[0.04] text-foreground font-semibold">{children}</thead>;
+            return (
+              <thead className="bg-foreground/[0.04] text-foreground font-semibold">
+                {children}
+              </thead>
+            );
           },
           tbody({ children }) {
-            return <tbody className="divide-y divide-black/[0.04] dark:divide-white/[0.04]">{children}</tbody>;
+            return (
+              <tbody className="divide-y divide-black/[0.04] dark:divide-white/[0.04]">
+                {children}
+              </tbody>
+            );
           },
           tr({ children }) {
-            return <tr className="hover:bg-foreground/[0.02] transition-colors">{children}</tr>;
+            return (
+              <tr className="hover:bg-foreground/[0.02] transition-colors">
+                {children}
+              </tr>
+            );
           },
           th({ children }) {
-            return <th className="px-4 py-3 text-xs uppercase tracking-wider font-semibold">{children}</th>;
+            return (
+              <th className="px-4 py-3 text-xs uppercase tracking-wider font-semibold">
+                {children}
+              </th>
+            );
           },
           td({ children }) {
-            return <td className="px-4 py-3 text-xs sm:text-sm text-foreground/80">{children}</td>;
+            return (
+              <td className="px-4 py-3 text-xs sm:text-sm text-foreground/80">
+                {children}
+              </td>
+            );
           },
 
           // Horizontal rule
           hr() {
-            return <hr className="my-8 border-t border-black/10 dark:border-white/10" />;
+            return (
+              <hr className="my-8 border-t border-black/10 dark:border-white/10" />
+            );
           },
         }}
       >

@@ -4,7 +4,7 @@ import { handleSuccess, handleError } from '@/platform/core/http';
 
 export async function GET(
   _request: NextRequest,
-  context: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> },
 ) {
   try {
     const { slug } = await context.params;

@@ -1,7 +1,11 @@
 import { db, schema } from '../../db';
 import { eq, desc, and, sql, like } from 'drizzle-orm';
 import { NotFoundError } from '../../core/errors';
-import { decodeCursor, encodeCursor, type ApiPaginationMeta } from '../../core/pagination';
+import {
+  decodeCursor,
+  encodeCursor,
+  type ApiPaginationMeta,
+} from '../../core/pagination';
 
 export interface BlogDto {
   id: string;
@@ -20,7 +24,12 @@ export interface BlogDto {
   readingTimeMinutes: number;
   canonicalUrl: string | null;
   coverImageUrl: string | null;
-  citations: Array<{ title: string; url?: string; author?: string; doi?: string }>;
+  citations: Array<{
+    title: string;
+    url?: string;
+    author?: string;
+    doi?: string;
+  }>;
   tags: string[];
 }
 
@@ -30,15 +39,19 @@ export interface BlogListResult {
 }
 
 export class BlogService {
-  async getBlogs(options: {
-    category?: string;
-    series?: string;
-    tag?: string;
-    status?: string;
-    limit?: number;
-    cursor?: string;
-  } = {}): Promise<BlogListResult> {
-    const limit = options.limit ? Math.min(Math.max(options.limit, 1), 100) : 20;
+  async getBlogs(
+    options: {
+      category?: string;
+      series?: string;
+      tag?: string;
+      status?: string;
+      limit?: number;
+      cursor?: string;
+    } = {},
+  ): Promise<BlogListResult> {
+    const limit = options.limit
+      ? Math.min(Math.max(options.limit, 1), 100)
+      : 20;
     const conditions = [];
 
     const targetStatus = options.status || 'published';
@@ -57,10 +70,12 @@ export class BlogService {
     }
 
     if (options.cursor) {
-      const decoded = decodeCursor<{ publishedAt: number; id: string }>(options.cursor);
+      const decoded = decodeCursor<{ publishedAt: number; id: string }>(
+        options.cursor,
+      );
       if (decoded && decoded.publishedAt) {
         conditions.push(
-          sql`(${schema.blog.publishedAt} < ${decoded.publishedAt} OR (${schema.blog.publishedAt} = ${decoded.publishedAt} AND ${schema.blog.id} < ${decoded.id}))`
+          sql`(${schema.blog.publishedAt} < ${decoded.publishedAt} OR (${schema.blog.publishedAt} = ${decoded.publishedAt} AND ${schema.blog.id} < ${decoded.id}))`,
         );
       }
     }
@@ -118,13 +133,16 @@ export class BlogService {
 
   async getBlogBySlug(slugOrTitle: string): Promise<BlogDto> {
     const decoded = decodeURIComponent(slugOrTitle).trim();
-    const normalizedSlug = decoded.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const normalizedSlug = decoded
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
     const records = await db
       .select()
       .from(schema.blog)
       .where(
-        sql`${schema.blog.slug} = ${slugOrTitle} OR ${schema.blog.slug} = ${normalizedSlug} OR LOWER(${schema.blog.title}) = LOWER(${decoded})`
+        sql`${schema.blog.slug} = ${slugOrTitle} OR ${schema.blog.slug} = ${normalizedSlug} OR LOWER(${schema.blog.title}) = LOWER(${decoded})`,
       )
       .limit(1);
 

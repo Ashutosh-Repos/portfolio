@@ -44,7 +44,11 @@ const defaultWritings: WritingItem[] = [
   },
 ];
 
-export const Writings = ({ items = defaultWritings }: { items?: WritingItem[] }) => {
+export const Writings = ({
+  items = defaultWritings,
+}: {
+  items?: WritingItem[];
+}) => {
   const displayItems = items.length > 0 ? items : defaultWritings;
 
   return (
@@ -66,7 +70,8 @@ export const Writings = ({ items = defaultWritings }: { items?: WritingItem[] })
         </LinkPreview>
       </div>
       <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
-        Personal essays and reflections on engineering craft, agency, judgment, and life.
+        Personal essays and reflections on engineering craft, agency, judgment,
+        and life.
       </p>
       <ul className="pt-3 grid grid-cols-1 min-[460px]:grid-cols-2 min-[890px]:grid-cols-1 gap-x-6 gap-y-2.5">
         {displayItems.map((writing) => (
@@ -76,7 +81,9 @@ export const Writings = ({ items = defaultWritings }: { items?: WritingItem[] })
             </span>
             <span className="text-xs text-foreground/40 shrink-0">-</span>
             <LinkPreview
-              url={`/writings/${encodeURIComponent(writing.slug || writing.title)}`}
+              url={`/writings/${encodeURIComponent(
+                writing.slug || writing.title,
+              )}`}
               multiline={true}
               dotGap={6}
               dotSize={2}

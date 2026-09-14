@@ -31,7 +31,9 @@ export async function cleanAndSyncAll() {
                  'essay-1', 'essay-2', 'essay-3', 'essay-4', 'essay-5', 'essay-6', 'essay-7')
   `);
 
-  console.log('✨ Cleaned legacy dummy blogs, placeholder essays, and placeholder paper rows.');
+  console.log(
+    '✨ Cleaned legacy dummy blogs, placeholder essays, and placeholder paper rows.',
+  );
 
   // 3. Seed authentic personal essays
   await seedAllWritings();

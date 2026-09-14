@@ -134,11 +134,14 @@ import { syncService } from '@/platform/integrations/sync.service';
 export async function GET() {
   // 1. Primary path: Fast local database snapshot (0ms latency, zero external rate limit)
   try {
-    const snapshot = await syncService.getSnapshot<LeetCodeStatsData>('leetcode_overview');
+    const snapshot = await syncService.getSnapshot<LeetCodeStatsData>(
+      'leetcode_overview',
+    );
     if (snapshot.data) {
       return NextResponse.json(snapshot.data, {
         headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Cache-Control':
+            'public, s-maxage=3600, stale-while-revalidate=86400',
         },
       });
     }

@@ -294,7 +294,6 @@ export const LinkPreview = ({
     );
   };
 
-
   const hostname = React.useMemo(() => {
     try {
       return new URL(url).hostname.replace(/^www\./, '');
@@ -317,12 +316,7 @@ export const LinkPreview = ({
     <>
       {isMounted && !isInternal && !isStatic ? (
         <span className="hidden" aria-hidden="true">
-          <img
-            src={src}
-            width={width}
-            height={height}
-            alt="hidden image"
-          />
+          <img src={src} width={width} height={height} alt="hidden image" />
         </span>
       ) : null}
 
@@ -350,10 +344,15 @@ export const LinkPreview = ({
               ref={textRef}
               className="relative inline transition-colors"
               style={{
-                backgroundImage: `radial-gradient(circle at ${size / 2}px ${size / 2}px, ${color} ${size / 2}px, transparent ${size / 2 + 0.3}px)`,
+                backgroundImage: `radial-gradient(circle at ${size / 2}px ${
+                  size / 2
+                }px, ${color} ${size / 2}px, transparent ${size / 2 + 0.3}px)`,
                 backgroundSize: `${gap}px ${Math.max(size, 2) + 2}px`,
                 backgroundRepeat: 'repeat-x',
-                backgroundPosition: `0 calc(100% - ${Math.max(0, -offsetY - 1)}px)`,
+                backgroundPosition: `0 calc(100% - ${Math.max(
+                  0,
+                  -offsetY - 1,
+                )}px)`,
                 paddingBottom: `${Math.max(size, 2) + Math.max(0, -offsetY)}px`,
                 WebkitBoxDecorationBreak: 'clone',
                 boxDecorationBreak: 'clone',

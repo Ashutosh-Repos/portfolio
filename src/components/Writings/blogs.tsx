@@ -14,7 +14,8 @@ const defaultWritings: BlogItem[] = [
   },
   {
     date: '02/Jan/2024',
-    title: 'ACID in Databases: Atomicity, Consistency, Isolation, and Durability',
+    title:
+      'ACID in Databases: Atomicity, Consistency, Isolation, and Durability',
     slug: 'acid',
   },
   {
@@ -34,7 +35,8 @@ const defaultWritings: BlogItem[] = [
   },
   {
     date: '19/Jan/2024',
-    title: 'The Architecture of Bitcask: A High-Performance Append-Only KV Store',
+    title:
+      'The Architecture of Bitcask: A High-Performance Append-Only KV Store',
     slug: 'bitcask',
   },
   {
@@ -71,7 +73,8 @@ export const Blogs = ({ items = defaultWritings }: { items?: BlogItem[] }) => {
         </LinkPreview>
       </div>
       <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
-        Deep dives on systems architecture, distributed data structures, low-latency databases, and AI engineering.
+        Deep dives on systems architecture, distributed data structures,
+        low-latency databases, and AI engineering.
       </p>
       <ul className="pt-3 grid grid-cols-1 min-[460px]:grid-cols-2 min-[890px]:grid-cols-1 gap-x-6 gap-y-2.5">
         {displayItems.map((writing) => (
@@ -81,7 +84,9 @@ export const Blogs = ({ items = defaultWritings }: { items?: BlogItem[] }) => {
             </span>
             <span className="text-xs text-foreground/40 shrink-0">-</span>
             <LinkPreview
-              url={`/blogs/${encodeURIComponent(writing.slug || writing.title)}`}
+              url={`/blogs/${encodeURIComponent(
+                writing.slug || writing.title,
+              )}`}
               multiline={true}
               dotGap={6}
               dotSize={2}
@@ -96,4 +101,3 @@ export const Blogs = ({ items = defaultWritings }: { items?: BlogItem[] }) => {
     </div>
   );
 };
-
