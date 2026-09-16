@@ -15,18 +15,35 @@ function getDbClient(): { client: Client; db: LibSQLDatabase<typeof schema> } {
     return { client: globalForDb.libsqlClient, db: globalForDb.drizzleDb };
   }
 
-  const url = process.env.TURSO_DATABASE_URL || 'file:./data/pdp.db';
+  let url = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
-  // If using local file, ensure parent directory exists
-  if (url.startsWith('file:')) {
-    const dataDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dataDir)) {
-      try {
-        fs.mkdirSync(dataDir, { recursive: true });
-      } catch {
-        // directory might already exist concurrently
+  // Local SQLite file mode fallback
+  if (!url) {
+    const sourceDbPath = path.join(process.cwd(), 'data', 'pdp.db');
+
+    // In serverless / read-only environments (such as Vercel or AWS Lambda),
+    // copy the bundled database to /tmp so SQLite has read/write filesystem access without EROFS
+    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      const tmpDbPath = path.join('/tmp', 'pdp.db');
+      if (!fs.existsSync(tmpDbPath) && fs.existsSync(sourceDbPath)) {
+        try {
+          fs.copyFileSync(sourceDbPath, tmpDbPath);
+        } catch (err) {
+          console.warn('[db] Failed to copy db to /tmp, falling back to source path:', err);
+        }
       }
+      url = fs.existsSync(tmpDbPath) ? `file:${tmpDbPath}` : `file:${sourceDbPath}`;
+    } else {
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) {
+        try {
+          fs.mkdirSync(dataDir, { recursive: true });
+        } catch {
+          // directory might already exist
+        }
+      }
+      url = `file:${sourceDbPath}`;
     }
   }
 
