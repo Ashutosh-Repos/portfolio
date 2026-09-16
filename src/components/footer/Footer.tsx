@@ -1,20 +1,26 @@
 import React from 'react';
 import LinkPreview from '@/components/ui/link-preview';
+import { MorphingText } from '../ui/morphing-text';
 
 export default function Footer() {
   return (
-    <footer className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center py-8 px-4 border-t border-black/8 dark:border-white/10 select-none">
+    <footer className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center py-8 px-4 pb-24 border-t border-black/8 dark:border-white/10 select-none">
       {/* Signature in Alex Brush */}
 
-      <span
+      {/* <span
         className="text-4xl sm:text-5xl text-neutral-800 dark:text-neutral-100 tracking-wide inline-block drop-shadow-sm transition-transform duration-300 hover:scale-105 cursor-default select-none"
         style={{ fontFamily: 'var(--font-alex-brush), cursive' }}
       >
         Ashutosh
-      </span>
+      </span> */}
+      <MorphingText
+        texts={['Ashutosh', 'Ram']}
+        className="text-4xl sm:text-5xl font-semibold sm:font-bold text-neutral-800 dark:text-neutral-100 tracking-wide inline-block drop-shadow-sm transition-transform duration-300 hover:scale-105 cursor-default select-none h-12 sm:h-14"
+        style={{ fontFamily: 'var(--font-alex-brush), cursive' }}
+      />
 
       {/* Inspirations line */}
-      <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mt-2 max-w-lg">
+      <div className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mt-2 max-w-lg">
         Website heavily inspired by{' '}
         <LinkPreview
           url="https://designerdada.com"
@@ -45,11 +51,11 @@ export default function Footer() {
         >
           Arpit Bhayani
         </LinkPreview>
-      </p>
+      </div>
 
       {/* Discreet copyright subtext */}
       <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-6 tracking-tight">
-        © {new Date().getFullYear()} Ashutosh Kumar.
+        © {new Date().getFullYear()} Ashutosh Ram.
       </p>
     </footer>
   );

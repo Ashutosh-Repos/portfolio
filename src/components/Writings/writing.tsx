@@ -69,7 +69,7 @@ export const Writings = ({
           View all &rarr;
         </LinkPreview>
       </div>
-      <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
+      <p className="relative pt-3 text-sm text-foreground/90 leading-relaxed">
         Personal essays and reflections on engineering craft, agency, judgment,
         and life.
       </p>

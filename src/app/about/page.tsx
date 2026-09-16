@@ -9,13 +9,25 @@ import { Award, Film, Tv, ExternalLink, Compass } from 'lucide-react';
 import Image from 'next/image';
 import LinkPreview from '@/components/ui/link-preview';
 import LiquidGlassAvatar from '@/components/about/LiquidGlassAvatar';
+import { ResumeViewer } from '@/components/about/ResumeViewer';
 import { SkillsShowcase } from '@/components/skills';
 
 export const metadata: Metadata = {
-  title: 'About — Ashutosh Kumar',
+  title: 'About Ashutosh — Software Engineer & Systems Architect',
   description:
-    'Background, education, experience, achievements, and engineering journey of Ashutosh Kumar.',
+    'Learn about Ashutosh (aka Intel 8085) — software engineer, systems architect, education at Dr. K. N. Modi Institute, technical skills, and open-source contributions.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About Ashutosh — Software Engineer & Systems Architect',
+    description:
+      'Learn about Ashutosh (aka Intel 8085) — software engineer, systems architect, education at Dr. K. N. Modi Institute, technical skills, and open-source contributions.',
+    url: '/about',
+    siteName: 'Ashutosh',
+  },
 };
+
 
 export default async function AboutPage() {
   const [educationList, experiences, skills, achievements] = await Promise.all([
@@ -151,9 +163,14 @@ export default async function AboutPage() {
         </div>
 
         <div className="text-base text-foreground leading-loose pt-1">
-          I&apos;m a continuous learner, currently focusing on Distributed
-          systems, microservices, database storage internals, and AI agents and
+          I&apos;m a continuous learner, currently mastering Rust, Distributed
+          systems, microservices, database storage internals, HFT systems, and AI agents and
           looking of opportunities to work in these domains.
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          <span className="text-base text-foreground">Here is my resume :</span>
+          <ResumeViewer />
         </div>
 
         <h1 className="text-xl md:text-2xl text-foreground mb-3 sm:mb-4 mt-8">

@@ -4,6 +4,7 @@ import React, {
   useId,
   useEffect,
   useRef,
+  useState,
   useSyncExternalStore,
   useMemo,
 } from 'react';
@@ -55,11 +56,41 @@ export const SparklesCore: React.FC<SparklesCoreProps> = ({
     () => false,
   );
 
+  const [isDarkDOM, setIsDarkDOM] = useState<boolean>(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsDarkDOM(document.documentElement.classList.contains('dark'));
+    };
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const isDark = mounted
+    ? resolvedTheme
+      ? resolvedTheme === 'dark'
+      : isDarkDOM
+    : isDarkDOM;
+
   const effectiveParticleColor = useMemo(() => {
     if (particleColor) return particleColor;
-    if (!mounted) return '#ffffff';
-    return resolvedTheme === 'dark' ? '#ffffff' : '#475569';
-  }, [particleColor, resolvedTheme, mounted]);
+    return isDark ? '#ffffff' : '#475569';
+  }, [particleColor, isDark]);
+
+  const colorRef = useRef(effectiveParticleColor);
+  useEffect(() => {
+    colorRef.current = effectiveParticleColor;
+  }, [effectiveParticleColor]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -128,15 +159,16 @@ export const SparklesCore: React.FC<SparklesCoreProps> = ({
 
       ctx.clearRect(0, 0, width, height);
 
-      // Parse color for alpha assignment
-      const isHex = effectiveParticleColor.startsWith('#');
+      // Parse color for alpha assignment using colorRef for seamless real-time theme transitions
+      const currentColor = colorRef.current;
+      const isHex = currentColor.startsWith('#');
       let r = 255,
         g = 255,
         b = 255;
-      if (isHex && effectiveParticleColor.length >= 7) {
-        r = parseInt(effectiveParticleColor.slice(1, 3), 16);
-        g = parseInt(effectiveParticleColor.slice(3, 5), 16);
-        b = parseInt(effectiveParticleColor.slice(5, 7), 16);
+      if (isHex && currentColor.length >= 7) {
+        r = parseInt(currentColor.slice(1, 3), 16);
+        g = parseInt(currentColor.slice(3, 5), 16);
+        b = parseInt(currentColor.slice(5, 7), 16);
       }
 
       for (let i = 0; i < particles.length; i++) {
@@ -186,7 +218,7 @@ export const SparklesCore: React.FC<SparklesCoreProps> = ({
       cancelAnimationFrame(animationFrameId);
       ro.disconnect();
     };
-  }, [effectiveParticleColor, minSize, maxSize, speed, particleDensity]);
+  }, [minSize, maxSize, speed, particleDensity]);
 
   return (
     <canvas

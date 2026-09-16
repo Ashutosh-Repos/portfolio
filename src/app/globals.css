@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -9,6 +8,16 @@ html {
   scroll-behavior: smooth;
   box-sizing: border-box;
   position: relative;
+}
+
+* {
+  cursor: none !important;
+}
+
+input,
+textarea,
+select {
+  cursor: text !important;
 }
 
 
@@ -162,4 +171,9 @@ html {
 html[data-magicui-theme-vt="active"]::view-transition-group(root) {
   animation-duration: var(--magicui-theme-toggle-vt-duration);
 }
+
+
+
+
+
 

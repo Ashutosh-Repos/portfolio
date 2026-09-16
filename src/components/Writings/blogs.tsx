@@ -72,7 +72,7 @@ export const Blogs = ({ items = defaultWritings }: { items?: BlogItem[] }) => {
           View all &rarr;
         </LinkPreview>
       </div>
-      <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
+      <p className="relative pt-3 text-sm text-foreground/90 leading-relaxed">
         Deep dives on systems architecture, distributed data structures,
         low-latency databases, and AI engineering.
       </p>

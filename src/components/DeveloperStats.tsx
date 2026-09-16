@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from './liquid/Container';
 import { GithubStats } from './stats';
@@ -26,7 +26,7 @@ export const DeveloperStats = () => {
         }
       >
         <Container
-          className={`rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full ${
+          className={`rounded-[32px] transition-all duration-300 w-full ${
             bothCollapsed ? 'p-4 sm:p-5' : 'p-6 sm:p-7'
           }`}
           radius={36}
@@ -50,7 +50,7 @@ export const DeveloperStats = () => {
         }
       >
         <Container
-          className={`rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full ${
+          className={`rounded-[32px] transition-all duration-300 w-full ${
             bothCollapsed ? 'p-4 sm:p-5' : 'p-6 sm:p-7'
           }`}
           radius={36}

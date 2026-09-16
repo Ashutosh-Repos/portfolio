@@ -14,6 +14,8 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
 async function main() {
   const rl = readline.createInterface({ input, output });
 
@@ -167,7 +169,7 @@ async function main() {
               2,
               Math.round(markdown.split(/\s+/).length / 200),
             ),
-            canonicalUrl: `https://portfolio-3-0-blond.vercel.app/writings/${slug}`,
+            canonicalUrl: `${BASE_URL}/writings/${slug}`,
             tagsJson: JSON.stringify(['Personal Essay', 'Design & Craft']),
           })
           .onConflictDoUpdate({
@@ -203,7 +205,7 @@ async function main() {
             slug,
             title,
             excerpt,
-            canonicalUrl: `https://portfolio-3-0-blond.vercel.app/blogs/${slug}`,
+            canonicalUrl: `${BASE_URL}/blogs/${slug}`,
             readingTimeMinutes: Math.max(
               3,
               Math.round(markdown.split(/\s+/).length / 200),
@@ -240,7 +242,7 @@ async function main() {
               3,
               Math.round(markdown.split(/\s+/).length / 200),
             ),
-            canonicalUrl: `https://portfolio-3-0-blond.vercel.app/blogs/${slug}`,
+            canonicalUrl: `${BASE_URL}/blogs/${slug}`,
             tagsJson: JSON.stringify(['Technical Blog', 'Engineering']),
           })
           .onConflictDoUpdate({

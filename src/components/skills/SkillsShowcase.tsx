@@ -27,13 +27,23 @@ export const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
-  // Discover available categories in current dataset
+  // Discover available categories in current dataset in canonical display order
   const availableCategories = useMemo(() => {
     const cats = new Set<string>();
     skills.forEach((s) => {
       if (s.category) cats.add(s.category);
     });
-    return ['all', ...Array.from(cats)];
+    const order = [
+      'all',
+      'languages',
+      'frameworks',
+      'networking',
+      'databases',
+      'cloud_infra',
+      'tools',
+      'ai_ml',
+    ];
+    return order.filter((cat) => cat === 'all' || cats.has(cat));
   }, [skills]);
 
   // Filter skills

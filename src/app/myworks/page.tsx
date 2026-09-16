@@ -14,10 +14,21 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'My Works — Ashutosh Kumar',
+  title: 'Projects & Works — Ashutosh',
   description:
-    'Open-source projects, systems, libraries, and tools built and maintained by Ashutosh Kumar.',
+    'High-performance systems, open-source tools, and developer infrastructure built and maintained by Ashutosh (creator of Bunly and Tessera).',
+  alternates: {
+    canonical: '/myworks',
+  },
+  openGraph: {
+    title: 'Projects & Works — Ashutosh',
+    description:
+      'High-performance systems, open-source tools, and developer infrastructure built and maintained by Ashutosh (creator of Bunly and Tessera).',
+    url: '/myworks',
+    siteName: 'Ashutosh',
+  },
 };
+
 
 export default async function MyWorksPage() {
   let projectList: Array<{

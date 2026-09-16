@@ -907,15 +907,484 @@ export const PAPERS_RAW: RawPaperItem[] = [
   },
 ];
 
+const ICONIC_PAPER_BREAKDOWNS: Record<string, (p: RawPaperItem) => string> = {
+  'attention-is-all-you-need': (p) => `# Attention Is All You Need
+
+> **Authors:** Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin  
+> **Venue / Publication:** NeurIPS (2017)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+The seminal paper that introduced the ==[highlight] Transformer architecture==, entirely abandoning recurrence (RNNs) and convolutions (CNNs) in favor of stacked ==[underline] self-attention mechanisms==. By eliminating sequential dependencies during training, the Transformer achieved state-of-the-art translation quality while training in a fraction of the time, fundamentally launching the modern foundation model and LLM revolution.
+
+---
+
+## Core Problem Statement & Motivation
+
+Prior sequence-to-sequence models (RNNs, LSTMs, GRUs) suffered from fundamental architectural bottlenecks:
+
+1. **==[underline] Inherent Sequential Computation==**: Hidden states $h_t$ strictly depended on $h_{t-1}$. This sequential nature prevented parallel processing across input tokens during training.
+2. **==[box] Long-Range Dependency Attenuation==**: Information had to travel step-by-step through the recurrence chain. Signals decaying over distance required $O(n)$ sequential operations to connect distant positions.
+3. **==[circle] Training Time Complexity==**: The inability to vectorize across the entire sequence length bounded throughput on modern parallel hardware (GPUs/TPUs).
+
+The authors posed a radical question: **Can sequence transductions be performed solely via attention mechanisms without any recurrent or convolutional steps?**
+
+---
+
+## Architectural Mechanisms & Deep System Design
+
+### 1. Scaled Dot-Product & Multi-Head Attention
+
+The core engine is ==[highlight] Scaled Dot-Product Attention==:
+
+$$\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$
+
+The scaling factor ==[circle] 1 / √d_k== counteracts large dot products pushing the softmax function into regions with vanishing gradients.
+
+Rather than computing a single attention function with $d_{model}$-dimensional keys, queries, and values, ==[underline] Multi-Head Attention== linearly projects queries, keys, and values $h = 8$ times to $d_k = 64$ dimensions:
+
+$$\\text{MultiHead}(Q, K, V) = \\text{Concat}(\\text{head}_1, \\dots, \\text{head}_h)W^O$$
+
+This allows the model to jointly attend to information from ==[box] different representation subspaces== at different sequence positions.
+
+### 2. Positional Encoding Without Recurrence
+
+Because the architecture contains no recurrence or convolutions, it possesses no inherent sense of token order. The authors injected positional information via fixed sinusoidal functions:
+
+$$PE_{(pos, 2i)} = \\sin(pos / 10000^{2i/d_{model}})$$
+$$PE_{(pos, 2i+1)} = \\cos(pos / 10000^{2i/d_{model}})$$
+
+This enables the model to easily learn to attend by relative positions since for any fixed offset $k$, $PE_{pos+k}$ is a linear function of $PE_{pos}$.
+
+### 3. Layer Complexity & Path Length Comparison
+
+| Layer Type | Complexity per Layer | Sequential Operations | Maximum Path Length |
+| :--- | :--- | :--- | :--- |
+| **Self-Attention** | $O(n^2 \\cdot d)$ | **==[circle] O(1)==** | **==[circle] O(1)==** |
+| **Recurrent (LSTM/GRU)** | $O(n \\cdot d^2)$ | $O(n)$ | $O(n)$ |
+| **Convolutional** | $O(k \\cdot n \\cdot d^2)$ | $O(1)$ | $O(\\log_k(n))$ |
+
+By collapsing the maximum path length between any two tokens to **==[circle] O(1)==**, self-attention drastically simplifies learning long-range syntactic and semantic dependencies.
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Recurrence Is Not Essential==**: Self-attention alone possesses sufficient expressive capacity to model arbitrary sequence relationships with zero sequential overhead.
+2. **==[underline] Parallel Hardware Alignment==**: Architectures that map directly onto GPU matrix multiplications (BLAS/GEMM) outpace algorithms constrained by step-by-step dependency loops.
+3. **==[bracket] The Foundation of Modern AI==**: GPT, BERT, Claude, and LLaMA all descend directly from the self-attention and multi-head primitives pioneered in this paper.
+`,
+
+  'spanner-google-s-globally-distributed-database': (
+    p,
+  ) => `# Spanner: Google’s Globally-Distributed Database
+
+> **Authors:** James C. Corbett, Jeffrey Dean, Michael Epstein, Andrew Fikes, Christopher Frost, J. J. Furman, Sanjay Ghemawat, et al.  
+> **Venue / Publication:** USENIX OSDI (2012)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+Google's planetary-scale distributed database, and the first system in computer science history to provide ==[highlight] externally consistent (linearizable) distributed transactions== at global scale. Spanner achieves this seemingly impossible feat by marrying Two-Phase Commit and Paxos with ==[underline] TrueTime==, an API backed by synchronized GPS receivers and atomic clocks.
+
+---
+
+## Core Problem Statement & Motivation
+
+Prior to Spanner, distributed systems engineers believed the CAP theorem forced an agonizing choice:
+- Pick high availability and eventual consistency (like Amazon Dynamo, Cassandra, Bigtable), **OR**
+- Suffer fragile single-datacenter master bottlenecks to keep ACID serializability.
+
+Google's mission-critical services (notably Google AdWords/F1) required:
+1. **==[box] Strict Serializability (External Consistency)==**: If transaction $T_2$ starts after transaction $T_1$ commits anywhere in the world, $T_2$'s commit timestamp must be strictly greater than $T_1$'s ($s_2 > s_1$).
+2. **==[underline] Non-Blocking Reads at Past Timestamps==**: Long-running read queries and backups should execute without taking any locks or blocking concurrent mutations.
+3. **==[underline] Global Multi-Datacenter Availability==**: Automatic failover and consensus-driven replication across continental distances.
+
+---
+
+## Architectural Mechanisms & Deep System Design
+
+### 1. The TrueTime API: Bounding Clock Uncertainty
+
+Physical clocks always drift. Rather than pretending clocks can be synchronized perfectly, Spanner explicitly represents time as an uncertainty interval:
+
+$$\\text{TrueTime.now}() \\to [t_{\\text{earliest}}, t_{\\text{latest}}]$$
+
+where the uncertainty $\\epsilon = (t_{\\text{latest}} - t_{\\text{earliest}})/2$ is bounded, typically ==[circle] < 7ms== in production. TrueTime master servers inside each datacenter utilize two orthogonal time sources:
+- **GPS receivers** (which can fail due to antenna issues or satellite faults), and
+- **Rubidium atomic clocks** (which drift slowly over time but have no common failure modes with GPS).
+
+### 2. The TrueTime Commit Wait Rule
+
+To enforce external consistency without cross-datacenter coordination on reads:
+
+1. **Acquire locks** on all participating Paxos groups.
+2. **Pick commit timestamp $s$**: The leader sets $s = \\text{TT.now}().\\text{latest}$.
+3. **==[box] Commit Wait Rule==**: The leader deliberately delays releasing locks and exposing $T$'s mutations until $\\text{TT.now}().\\text{earliest} > s$.
+
+By waiting out the uncertainty window $\\epsilon$, Spanner guarantees that any future transaction $T_2$ anywhere on Earth will observe a start time $\\text{TT.now}().\\text{earliest} > s$.
+
+### 3. Layered Replication Architecture: 2PC over Paxos
+
+Spanner arranges data into tablets replicated across datacenters via **Paxos groups**:
+- **Single-Paxos Transactions**: Mutations affecting keys in a single Paxos group skip 2PC entirely, committing through the group's Paxos leader in ==[circle] 1 RTT==.
+- **Cross-Group Distributed Transactions**: Employs a Two-Phase Commit (2PC) protocol where the participants and coordinator are themselves fault-tolerant Paxos groups!
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Make Uncertainty Explicit==**: When physical realities (clock drift) cannot be eliminated, represent them as bounded mathematical ranges rather than fragile point estimates.
+2. **==[underline] Read-Free Lock Isolation==**: By assigning strict commit timestamps, read transactions execute lock-free against immutable snapshot versions without starving writers.
+3. **==[bracket] CAP Theorem Reframed==**: As Eric Brewer famously observed, Spanner effectively acts as a CA system because network partitions are minimized through redundant private optical backbones and Paxos quorums.
+`,
+
+  'bigtable-a-distributed-storage-system-for-structured-data': (
+    p,
+  ) => `# Bigtable: A Distributed Storage System for Structured Data
+
+> **Authors:** Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, Robert E. Gruber  
+> **Venue / Publication:** USENIX OSDI (2006)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+The foundational paper that established the modern NoSQL paradigm. Bigtable is a distributed, sparse, persistent ==[highlight] multidimensional sorted map== designed to reliably scale to petabytes of data across thousands of commodity machines, powering Google Search index, Google Earth, and Google Analytics.
+
+---
+
+## Data Model & Fundamentals
+
+Bigtable models data as:
+
+$$\\text{(row:string, column:string, time:int64)} \\to \\text{string}$$
+
+- **Row Keys**: Arbitrary strings up to 64KB. Every read or write of data under a single row key is ==[box] atomic==. Rows are maintained in lexicographic order.
+- **Column Keys**: Grouped into ==[underline] Column Families== (the basic unit of access control and disk layout).
+- **Timestamps**: 64-bit integers supporting multi-versioning, automatic garbage collection (e.g. keep only the last ==[circle] 3 versions== or discard older than ==[circle] 7 days==).
+
+---
+
+## Architectural Mechanisms & Storage Engine
+
+### 1. Tablet Architecture & LSM Lifecycle
+
+A table is dynamically partitioned into horizontal ranges called **Tablets** (typically ==[circle] 100MB to 200MB== each):
+1. **MemTable**: Recent mutations are buffered in memory in an ordered skip list and logged to a commit log in GFS.
+2. **SSTables (Sorted String Tables)**: Immutable, block-indexed sorted files persisted on GFS.
+3. **Compactions**:
+   - **Minor Compaction**: Flushes the active MemTable to an SSTable on GFS when it exceeds memory thresholds.
+   - **Merging Compaction**: Reads a few SSTables and MemTable, producing a new SSTable to bound read fanout.
+   - **Major Compaction**: Rewrites all SSTables of a tablet into a single SSTable, permanently purging deleted rows marked with ==[box] tombstone records==.
+
+### 2. Bloom Filters for Read Latency Minimization
+
+Because a tablet's data is fragmented across multiple SSTables on disk, reads might require checking every SSTable. Bigtable integrates ==[underline] Bloom filters== on SSTable blocks, allowing tablet servers to determine that an SSTable does not contain a given row/column pair with **==[circle] 99% accuracy==** without issuing expensive disk seeks!
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Immutability Simplifies Concurrency==**: SSTables are completely immutable. Reads require no synchronization with writers, and deletions are simply new versioned tombstone markers.
+2. **==[underline] Row Key Engineering==**: Placing reversed domain names (\`com.google.maps\`) allows related web pages to cluster contiguously in row key order for high-throughput scans.
+3. **==[bracket] The Ancestor of Apache HBase and Cassandra==**: Bigtable's sorted string table architecture, column family schema, and tablet splitting became the blueprint for modern distributed big data storage.
+`,
+
+  'the-google-file-system': (p) => `# The Google File System (GFS)
+
+> **Authors:** Sanjay Ghemawat, Howard Gobioff, Shun-Tak Leung  
+> **Venue / Publication:** ACM SOSP (2003)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+The revolutionary distributed storage architecture that proved massive cluster scale could be achieved using inexpensive, unreliable commodity hardware. GFS replaced conventional POSIX assumptions with a design tailored specifically for large sequential reads and ==[highlight] append-at-least-once mutations==, serving as the storage bedrock for Google Search and MapReduce.
+
+---
+
+## Core Radical Axioms
+
+1. **==[highlight] Component Failures Are the Norm==**: With tens of thousands of commodity hard drives and nodes, disk failures, network switches dropping packets, and kernel panics occur continuously. Fault tolerance must be baked into every layer.
+2. **==[box] Files Are Huge by Traditional Standards==**: Files are commonly multi-gigabytes to terabytes in size; optimizing for billions of 4KB files is discarded in favor of streaming giant files.
+3. **==[underline] Appending Over In-Place Overwrites==**: Data is almost always appended rather than rewritten in-place. Random writes are practically non-existent.
+
+---
+
+## Architectural Mechanisms
+
+### 1. 64 MB Giant Chunk Size
+
+While traditional UNIX file systems use 4KB or 8KB disk blocks, GFS chunks are **==[circle] 64 MB==**.
+- **Massive Metadata Reduction**: A 1TB file requires only ==[circle] 16,384 chunks== of metadata, allowing the single master node to keep the entire namespace and block location map resident in memory!
+- **Reduced Network Overhead**: Clients make a single master request to discover chunk locations, then stream megabytes directly to chunkservers.
+
+### 2. Master-Chunkserver Separation
+
+- **Single Master**: Holds file namespaces, access control, file-to-chunk mappings, and chunk location caches entirely in RAM. Operation log persisted with checkpointing.
+- **Chunkservers**: Store 64MB chunks as standard Linux files on local ext3 file systems. Replicated across ==[circle] 3 distinct failure domains==.
+- **Decoupled Control & Data Flow**: Clients query the master only for metadata. Actual data transfers are pipelined linearly through chunkservers over TCP.
+
+### 3. Record Append Semantics
+
+GFS introduced the atomic **Record Append** operation: clients do not specify an offset; the primary chunkserver chooses the offset and appends data atomically at least once.
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Trade POSIX for Scale==**: Relaxing strict POSIX consistency guarantees in favor of atomic record appends unlocked orders of magnitude higher throughput.
+2. **==[underline] In-Memory Master Scalability==**: Eliminating master disk reads enabled millisecond namespace resolution across millions of files.
+3. **==[bracket] The Genesis of HDFS==**: GFS proved that commodity hardware combined with smart consensus, chunking, and replication is vastly superior to expensive proprietary SAN/NAS hardware.
+`,
+
+  'mapreduce-simplified-data-processing-on-large-clusters': (
+    p,
+  ) => `# MapReduce: Simplified Data Processing on Large Clusters
+
+> **Authors:** Jeffrey Dean, Sanjay Ghemawat  
+> **Venue / Publication:** USENIX OSDI (2004)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+The computational model that democratized distributed big data. MapReduce abstracted away the messy complexities of cluster scheduling, fault tolerance, network partitioning, and data distribution behind two simple functional primitives: ==[highlight] Map== and ==[highlight] Reduce==.
+
+---
+
+## The Programming Abstraction
+
+The entire distributed computation is expressed via two user-defined functions:
+
+$$\\text{map}(k_1, v_1) \\to \\text{list}(k_2, v_2)$$
+$$\\text{reduce}(k_2, \\text{list}(v_2)) \\to \\text{list}(v_3)$$
+
+All values associated with the same intermediate key $k_2$ are grouped together by the framework and passed to the reducer function.
+
+---
+
+## Architectural Mechanisms & Runtime Execution
+
+### 1. Locality Optimization & GFS Co-location
+
+Network bandwidth is the scarcest cluster resource. MapReduce exploits GFS replication by scheduling Map tasks on the **==[underline] exact physical machines==** hosting the input 64MB chunk replicas! When that is impossible, it attempts to schedule on the same network rack.
+
+### 2. Fault Tolerance Through Deterministic Re-execution
+
+- **Worker Failure**: The master periodically pings every worker via heartbeats. If a worker fails, completed Map tasks are re-executed (because their intermediate output resided on the failed worker's local disk).
+- **Straggler Mitigation (Backup Tasks)**: Near the end of a MapReduce job, the master schedules ==[box] speculative backup executions== of the remaining in-progress tasks. Whichever copy finishes first wins, reducing job completion tail latency by **==[circle] 30% to 44%==**!
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Hide Cluster Complexity==**: Developers focus solely on pure transformation functions; the framework orchestrates partitioning, sorting, network transmission, and failure recovery.
+2. **==[underline] Computation Follows Data==**: Moving compute to data is orders of magnitude cheaper than moving data to compute across the network switch fabric.
+3. **==[bracket] Foundation of Modern Data Engineering==**: MapReduce birthed Apache Hadoop and paved the path for Apache Spark, Flink, and distributed batch processing.
+`,
+
+  'firecracker-lightweight-virtualization-for-serverless-applications': (
+    p,
+  ) => `# Firecracker: Lightweight virtualization for serverless applications
+
+> **Authors:** Alexandru Agache, Marc Brooker, Andreea Florescu, Alexandra Iordache, Anthony Liguori, Rolf Neugebauer, Phil Piwonka, Diana-Maria Popa  
+> **Venue / Publication:** USENIX NSDI (2020)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+Amazon Web Services' open-source Virtual Machine Monitor (VMM) purpose-built for serverless workloads (AWS Lambda and AWS Fargate). By stripping away 95% of legacy PC hardware emulation and leveraging Linux KVM, Firecracker combines the ==[highlight] strong multi-tenant security boundary of virtual machines== with the ==[underline] sub-second launch speeds of containers==.
+
+---
+
+## The Serverless Dilemma: Isolation vs. Density
+
+Traditional infrastructure forced an impossible tradeoff:
+- **Linux Containers (Docker/cgroups/namespaces)**: Super-fast startup (<100ms) and high packing density, but share the host Linux kernel surface, making untrusted multi-tenant isolation vulnerable to privilege escalation CVEs.
+- **Traditional VMs (QEMU/KVM)**: Hardware-enforced isolation via CPU virtualization (Intel VT-x / AMD-V), but huge memory overhead (>=100MB per VM) and slow boot times (10s to minutes) due to legacy PC emulation (ACPI, PCI bus, IDE, legacy BIOS).
+
+---
+
+## Architectural Innovations
+
+### 1. The Minimal Device Model
+
+Firecracker throws away almost all standard PC devices:
+- **No PCI bus**, no ACPI, no IDE, no USB, no sound cards.
+- Supports only ==[circle] 4 essential devices==: \`virtio-net\`, \`virtio-block\`, \`virtio-vsock\`, and a minimal serial console.
+- Boots uncompressed Linux kernel images directly using an inline x86/ARM bootloader.
+
+### 2. Radical Performance Benchmarks
+
+| Metric | Traditional QEMU VM | Firecracker MicroVM |
+| :--- | :--- | :--- |
+| **Startup Time** | > 10,000 ms | **==[circle] < 5 ms==** |
+| **Base Memory Footprint** | > 100 MB | **==[circle] < 5 MB==** |
+| **Concurrency on Single Host** | Hundreds | **==[circle] Thousands==** |
+
+### 3. Defence in Depth: The Jailer Security Boundary
+
+Firecracker is implemented in **Rust** to eliminate memory corruption bugs. Outside the VMM, every microVM process is wrapped in a dedicated **Jailer** process that enforces:
+- Chroot jail into an empty directory
+- Drops all Linux capabilities to unprivileged user
+- Applies strict ==[box] seccomp filter bpf rules== blocking unauthorized syscalls
+- Isolates CPU, memory, and disk I/O through dedicated cgroups.
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Eradicate Accidental Complexity==**: Serverless functions do not need virtual floppy drives, VGA displays, or PCI buses. Eliminating legacy code collapses both attack surface and startup latency.
+2. **==[underline] Hardware Isolation Is Non-Negotiable==**: Hardware-enforced page table boundaries (EPT/NPT) remain the gold standard for running untrusted client code in multi-tenant clouds.
+3. **==[bracket] The Golden Standard for Serverless==**: Firecracker demonstrated that microVMs can achieve container-level agility with hypervisor-grade isolation.
+`,
+
+  'c-c-thread-safety-analysis': (p) => `# C/C++ Thread Safety Analysis
+
+> **Authors:** DeLesley Hutchins, Aaron Ballman, Delesley Hutchins, Google & LLVM Clang Team  
+> **Venue / Publication:** LLVM / Google Engineering (2014)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+A compiler-level static annotation framework integrated into Clang that detects race conditions, missing locks, and deadlocks at **==[highlight] compile time==**. By formalizing lock policies directly into type signatures, it enforces concurrent thread safety with **==[circle] zero runtime overhead==**.
+
+---
+
+## Core Problem: Concurrency Race Conditions
+
+Multi-threaded C++ software in large codebases suffers from subtle synchronization errors:
+1. Accessing shared data without holding the protecting mutex.
+2. Failing to release a lock along exceptional code paths.
+3. Acquiring locks out-of-order, triggering cyclic deadlocks.
+
+Dynamic sanitizers (like ThreadSanitizer) are invaluable, but require code execution, high test coverage, and incur ==[box] 2x to 10x memory and CPU overhead==.
+
+---
+
+## Clang Semantic Annotations
+
+The framework introduces expressive compiler attributes:
+
+- **\`GUARDED_BY(m)\`**: Declares that variable $v$ can only be read or written when mutex $m$ is locked.
+- **\`REQUIRES(m)\`**: Asserts that calling a function requires caller to already hold mutex $m$.
+- **\`ACQUIRED_BEFORE(m1, m2)\`**: Statically enforces lock acquisition order to ==[box] prevent cyclic deadlocks==.
+
+\`\`\`cpp
+class ThreadSafeAccount {
+  Mutex mu;
+  int balance GUARDED_BY(mu);
+
+public:
+  void Deposit(int amount) {
+    mu.Lock();
+    balance += amount; // Validated at compile time!
+    mu.Unlock();
+  }
+  
+  void DangerouslyUnsafe() {
+    // balance += 10; -> COMPILER WARNING: writing variable 'balance' requires holding mutex 'mu'
+  }
+};
+\`\`\`
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] Compile-Time Enforcement Beats Runtime Triage==**: Static analysis catches 100% of analyzed code paths including rarely executed error-recovery branches.
+2. **==[underline] Zero Performance Penalty==**: Because checks occur strictly inside the compiler's Abstract Syntax Tree (AST), runtime binary performance is **==[circle] 100% unaffected==**.
+3. **==[bracket] Documentation That Doesn't Lie==**: Lock requirements become living code contracts that the compiler enforces continuously during builds.
+`,
+
+  'f1-a-distributed-sql-database-that-scales': (
+    p,
+  ) => `# F1: A Distributed SQL Database That Scales
+
+> **Authors:** Jeff Shute, Mircea Oancea, Stephan Ellner, Ben Handy, Eric Rollins, Bart Samwel, Radek Vingralek, Corey Whipkey, et al.  
+> **Venue / Publication:** VLDB (2013)  
+> **Original Document:** [View PDF via Google Drive](${p.url})
+
+---
+
+## Executive Summary
+
+Google's distributed relational database powering the AdWords advertising engine. Built on top of Spanner, F1 combines the ==[highlight] high availability and horizontal scalability of NoSQL== with the ==[underline] strict ACID transactions and relational SQL querying== of traditional enterprise databases.
+
+---
+
+## The Migration Motivation
+
+Google AdWords originally ran on a sharded MySQL database. As data and query load exploded, application-level sharding became disastrous:
+- Sharding logic leaked into application code.
+- Cross-shard transactions were impossible or dangerously slow.
+- Resharding required months of manual operational engineering.
+
+---
+
+## Architectural Mechanisms
+
+### 1. Decoupled Compute and Storage
+
+F1 completely separates stateless query execution nodes from stateful storage:
+- **Stateless F1 Query Servers**: Accept SQL queries, parse, optimize, execute distributed join plans, and coordinate transactions.
+- **Spanner Storage Layer**: Stores data across tablets replicated via Paxos across global datacenters.
+
+### 2. Optimistic Concurrency Control (OCC) with Column-Level Locks
+
+Unlike traditional relational databases that hold pessimistic read locks, F1 uses ==[box] Optimistic Concurrency Control==:
+- Reads take no locks whatsoever.
+- Each row contains a hidden lock column with a version timestamp.
+- On commit, F1 verifies that read rows were not modified by another transaction.
+
+### 3. Distributed Query Engine (Hash Joins & Partition-Aware Routing)
+
+F1 features a full-fledged parallel query execution engine capable of evaluating complex analytic and OLTP queries across thousands of machines simultaneously using distributed hash joins and pipelined streaming exchanges.
+
+---
+
+## Key Takeaways
+
+1. **==[highlight] NoSQL Scalability Does Not Require Giving Up SQL==**: Distributed architectures can provide strong relational semantics if storage and query execution layers are cleanly separated.
+2. **==[underline] Optimistic Locking for Interactive Workloads==**: OCC prevents long-running user transactions from blocking concurrent writes.
+3. **==[bracket] The Blueprints for CockroachDB and TiDB==**: F1 and Spanner together laid the modern architectural foundation for NewSQL globally distributed databases.
+`,
+};
+
 function generateMarkdownBreakdown(paper: RawPaperItem): string {
+  const slug = paper.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+  if (ICONIC_PAPER_BREAKDOWNS[slug]) {
+    return ICONIC_PAPER_BREAKDOWNS[slug](paper);
+  }
+
   const authorsStr = (paper.authors || ['Research Group']).join(', ');
   const venueStr = paper.venue || 'Computer Science Conference';
   const yearStr = paper.year || 2020;
+  const tagsStr = (paper.tags || ['Systems']).join(', ');
 
   return `# ${paper.title}
 
 > **Authors:** ${authorsStr}  
 > **Venue / Publication:** ${venueStr} (${yearStr})  
+> **Primary Topics:** ${tagsStr}  
 > **Original Document:** [View PDF via Google Drive](${paper.url})
 
 ---
@@ -924,10 +1393,10 @@ function generateMarkdownBreakdown(paper: RawPaperItem): string {
 
 ${
   paper.excerpt ||
-  'An architectural examination of the seminal mechanisms, distributed systems tradeoffs, and production implications presented in this paper.'
+  'An architectural examination of the seminal mechanisms, systems tradeoffs, and production implications presented in this research paper.'
 }
 
-This paper addresses core systems constraints around scale, fault tolerance, low-latency execution, and ergonomic developer abstractions. Below is an architectural breakdown of the key mechanisms, design tradeoffs, and practical engineering lessons.
+This paper addresses foundational constraints around ==[highlight] scalability, fault tolerance, low-latency execution==, and architectural ergonomics in modern computing systems.
 
 ---
 
@@ -935,9 +1404,9 @@ This paper addresses core systems constraints around scale, fault tolerance, low
 
 In high-throughput, distributed computing and production systems, traditional single-node or centralized coordination models fail due to:
 
-1. **Scalability Bottlenecks**: Centralized state management or locking becomes untenable when request rates scale across hundreds of thousands of concurrent clients.
-2. **Failure Dominance**: In large commodity clusters, hardware faults, network partitions, and machine reboots are continuous realities rather than rare anomalies.
-3. **Latency Tail Distribution**: High 99th and 99.9th percentile latencies degrade user-facing reliability if requests must wait on synchronous coordination or unbalanced partition queues.
+1. **==[underline] Scalability Bottlenecks==**: Centralized state management or locking becomes untenable when request rates scale across hundreds of thousands of concurrent clients.
+2. **==[underline] Failure Dominance==**: In large commodity clusters, hardware faults, network partitions, and machine reboots are continuous realities rather than rare anomalies.
+3. **==[circle] Latency Tail Distribution==**: High 99th and 99.9th percentile latencies degrade user-facing reliability if requests must wait on synchronous coordination or unbalanced partition queues.
 
 To overcome these challenges, the authors proposed novel architectural abstractions, data structures, and protocol guarantees.
 
@@ -947,12 +1416,12 @@ To overcome these challenges, the authors proposed novel architectural abstracti
 
 ### 1. Separation of Concerns & Decoupled State
 
-The architecture deliberately decouples control-plane scheduling and coordination from data-plane streaming and mutation paths. By ensuring data paths remain lock-free or asynchronous, nodes operate independently with minimal cross-network barrier synchronization.
+The architecture deliberately decouples ==[highlight] control-plane scheduling== from ==[highlight] data-plane streaming== and mutation paths. By ensuring data paths remain lock-free or asynchronous, nodes operate independently with minimal cross-network barrier synchronization.
 
 ### 2. High-Efficiency Data Structures & Protocols
 
-- **Optimized Storage & Layout**: Utilizes localized memory alignments, columnar/chunked block compression, and log-structured storage or skip graphs to guarantee predictable I/O bounds.
-- **Resilient Consensus & Quorums**: Rather than full global agreement for every operation, the design leverages localized quorums, leases, or probabilistic approximations to maximize availability during transient failures.
+- **Optimized Storage & Layout**: Utilizes localized memory alignments, columnar/chunked block compression, and log-structured storage or skip graphs to guarantee predictable ==[box] I/O bounds==.
+- **Resilient Consensus & Quorums**: Rather than full global agreement for every operation, the design leverages ==[underline] localized quorums, leases, or probabilistic approximations== to maximize availability during transient failures.
 - **Backpressure & Flow Control**: Integrates adaptive rate-limiting and buffer shedding to prevent cascading queue collapses under sudden burst workloads.
 
 ---
@@ -961,17 +1430,17 @@ The architecture deliberately decouples control-plane scheduling and coordinatio
 
 | Consideration | Primary Tradeoff | System Decision |
 | :--- | :--- | :--- |
-| **Consistency vs. Latency** | Strong serializability vs. low tail latency | Bounded eventual consistency or hardware-synchronized TrueTime intervals |
+| **Consistency vs. Latency** | Strong serializability vs. low tail latency | ==[box] Bounded eventual consistency== or hardware-synchronized intervals |
 | **Resource Overhead** | Memory footprint vs. CPU compute | Cache-aligned representations and sparse indices |
-| **Operational Complexity** | Distributed recovery vs. single-point bottlenecks | Automated peer gossip and self-healing replicas |
+| **Operational Complexity** | Distributed recovery vs. single-point bottlenecks | ==[underline] Automated peer gossip and self-healing replicas== |
 
 ---
 
 ## Key Takeaways
 
-1. **Design for Continuous Degradation**: Build systems that operate gracefully in degraded states rather than halting on partial partition failures.
-2. **Amortize Expensive Computations**: Leverage batching, vectorization, or probabilistic sketches (such as Bloom filters and HyperLogLog) to avoid full scans.
-3. **Simplicity in Primitives**: Clean, orthogonal building blocks (like append-only logs, immutable snapshots, and idempotent handlers) enable robust higher-level architectures.
+1. **Design for ==[highlight] Continuous Degradation==**: Build systems that operate gracefully in degraded states rather than halting on partial partition failures.
+2. **Amortize Expensive Computations**: Leverage batching, vectorization, or ==[box] probabilistic sketches== to avoid full scans.
+3. **Simplicity in Primitives**: ==[bracket] Clean, orthogonal building blocks (like append-only logs, immutable snapshots, and idempotent handlers) enable robust higher-level architectures.==
 
 ---
 

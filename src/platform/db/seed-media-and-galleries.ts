@@ -1,5 +1,5 @@
 import { db, schema } from './index';
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -15,6 +15,7 @@ export async function seedMediaAndGalleries() {
     return fs
       .readdirSync(fullPath)
       .filter((f) => !f.startsWith('.'))
+      .sort((a, b) => a.localeCompare(b))
       .map((f) => ({
         filename: f,
         relPath: `/${relDir}/${encodeURIComponent(f)}`,
@@ -49,8 +50,13 @@ export async function seedMediaAndGalleries() {
           : ext === '.avif'
           ? 'image/avif'
           : 'image/jpeg';
-      const id = `media-${prefix}-${i + 1}`;
       const storageKey = `${prefix}/${file.filename}`;
+      const existing = await db
+        .select({ id: schema.mediaItem.id })
+        .from(schema.mediaItem)
+        .where(eq(schema.mediaItem.storageKey, storageKey))
+        .get();
+      const id = existing?.id || `media-${prefix}-${i + 1}`;
       const lowerName = file.filename.toLowerCase();
 
       let caption = `${prefix.replace(/_/g, ' ')} photograph`;
@@ -535,7 +541,7 @@ export async function seedMediaAndGalleries() {
         },
         {
           platform: 'Portfolio',
-          url: 'https://portfolio-3-0-blond.vercel.app',
+          url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
           username: 'portfolio',
           icon: 'globe',
         },
@@ -578,7 +584,7 @@ export async function seedMediaAndGalleries() {
           },
           {
             platform: 'Portfolio',
-            url: 'https://portfolio-3-0-blond.vercel.app',
+            url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
             username: 'portfolio',
             icon: 'globe',
           },

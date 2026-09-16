@@ -5,6 +5,7 @@ import { LinkPreview } from '../ui/link-preview';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TechBubble } from './TechBubble';
 import LiquidGlassAvatar from './LiquidGlassAvatar';
+import { ResumeViewer } from './ResumeViewer';
 
 export const About = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -114,11 +115,14 @@ export const About = () => {
         <AnimatePresence initial={false}>
           {isExpanded && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              animate={{
+                opacity: 1,
+                height: 'auto',
+                transitionEnd: { overflow: 'visible' },
+              }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-hidden"
             >
               <div className="text-base text-foreground pb-2">
                 I&apos;ve been building an open-source video engine,{' '}
@@ -174,14 +178,18 @@ export const About = () => {
                   name="MongoDB"
                   url="https://www.mongodb.com/"
                 />
-                . I&apos;m a continuous learner, currently learning{' '}
+                . I&apos;m a continuous learner, currently learning & mastering{' '}
                 <TechBubble
                   icon="/rust.svg"
                   name="Rust"
                   url="https://www.rust-lang.org"
                   invertDark
                 />{' '}
-                and looking for a career in the HFT/Fintech space.
+                , Distributed systems, microservices, database storage internals, hft systems and AI agents and looking of opportunities to work in these domains.
+              </div>
+              <div className="flex flex-wrap items-center gap-2 pt-2">
+                <span className="text-base text-foreground">Here is my resume :</span>
+                <ResumeViewer />
               </div>
             </motion.div>
           )}

@@ -4,6 +4,7 @@ import { seedAllWritings } from './seed-all-writings';
 import { seedAllPapers } from './seed-all-papers';
 import { seedMediaAndGalleries } from './seed-media-and-galleries';
 import { seedHobbies } from './seed-hobbies';
+import { insertBloomFilterArticle } from './seed-bloom-filters';
 
 export async function cleanAndSyncAll() {
   console.log('🧹 Cleaning old dummy publications from database...');
@@ -35,8 +36,11 @@ export async function cleanAndSyncAll() {
     '✨ Cleaned legacy dummy blogs, placeholder essays, and placeholder paper rows.',
   );
 
-  // 3. Seed authentic personal essays
+  // 3. Seed authentic personal essays, Bloom Filters blog, and enrich all blogs
   await seedAllWritings();
+  await insertBloomFilterArticle();
+  const { enrichAllBlogsInDb } = await import('./enrich-all-blogs');
+  await enrichAllBlogsInDb();
 
   // 4. Seed all 83 research papers
   await seedAllPapers();

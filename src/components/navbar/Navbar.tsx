@@ -4,13 +4,22 @@ import React, { useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Container } from '@/components/liquid/Container';
-import { Home, User, Briefcase, Mail } from 'lucide-react';
+import {
+  Home,
+  User,
+  Briefcase,
+  Mail,
+  NotebookPenIcon,
+  NotebookPen,
+  PencilSparkles,
+} from 'lucide-react';
 import { AnimatedThemeToggler } from '../ui/animated-theme-toggler';
 
 const navItems = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'About Me', href: '/about', icon: User },
   { label: 'My Works', href: '/myworks', icon: Briefcase },
+  { label: 'Writings', href: '/writings', icon: PencilSparkles },
   { label: 'Contact me', href: '/contactme', icon: Mail },
 ] as const;
 

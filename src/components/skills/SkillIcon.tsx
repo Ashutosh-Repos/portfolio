@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import {
   SKILL_ICON_MAP,
+  SKILL_SCALE_MAP,
   DARK_INVERT_SLUGS,
   CATEGORY_FALLBACK_ICONS,
   getSkillMonogram,
@@ -22,7 +23,7 @@ export interface SkillIconProps {
 /**
  * SkillIcon — 3-Tier Bulletproof Icon Renderer
  *
- * Tier 1: Resolves registered vector SVG asset with Next.js Image or standard img.
+ * Tier 1: Resolves registered vector SVG / high-DPI PNG asset with optical scaling.
  * Tier 2: Gracefully catches onError or unmapped icon and renders category-specific Lucide vector icon.
  * Tier 3: If no icon or category matches, renders a sleek typographic monogram (e.g., 'TS', 'GO', 'PY').
  */
@@ -36,12 +37,13 @@ export const SkillIcon: React.FC<SkillIconProps> = ({
 }) => {
   const [hasError, setHasError] = useState(false);
 
-  // 1. Resolve registered SVG path
+  // 1. Resolve registered asset path
   const key = (iconSlug || slug || '').toLowerCase();
   const iconSrc = SKILL_ICON_MAP[key] || null;
   const isInvertDark = DARK_INVERT_SLUGS.has(key);
+  const opticalScale = SKILL_SCALE_MAP[key] || '';
 
-  // Tier 1: SVG Asset available and has not failed
+  // Tier 1: Asset available and has not failed
   if (iconSrc && !hasError) {
     return (
       <div
@@ -56,8 +58,10 @@ export const SkillIcon: React.FC<SkillIconProps> = ({
           height={size}
           alt={name}
           onError={() => setHasError(true)}
+          unoptimized
           className={cn(
             'w-full h-full object-contain pointer-events-none select-none transition-transform duration-200 group-hover:scale-105',
+            opticalScale,
             isInvertDark && 'dark:invert dark:brightness-125',
           )}
           loading="eager"

@@ -149,14 +149,14 @@ async function fetchAndMergeAcidBlog() {
   const isolation = validParts.find((p) => p.slug === 'isolation');
   const durability = validParts.find((p) => p.slug === 'durability');
 
-  const combinedMarkdown = `ACID guarantees are the cornerstone of transactional reliability in database systems. First coined in 1983 by Andreas Reuter and Theo Härder building upon Jim Gray's work, ACID ensures that database transactions are processed reliably even in the presence of power loss, hardware failures, concurrent race conditions, and network partitions.
+  const combinedMarkdown = `==[highlight] ACID guarantees are the cornerstone of transactional reliability in database systems.== First coined in ==[circle] 1983== by Andreas Reuter and Theo Härder building upon Jim Gray's work, ACID ensures that database transactions are processed reliably even in the presence of power loss, hardware failures, concurrent race conditions, and network partitions.
 
 In this comprehensive essay, we explore the four foundational pillars of ACID end-to-end:
 
-1. **Atomicity** — All-or-nothing execution
-2. **Consistency** — Preserving application and database invariants
-3. **Isolation** — Concurrent transaction execution without race hazards
-4. **Durability** — Ensuring committed transactions survive crashes and power failure
+1. **==[underline] Atomicity==** — ==[box] All-or-nothing execution==
+2. **==[underline] Consistency==** — ==[box] Preserving application and database invariants==
+3. **==[underline] Isolation==** — ==[box] Concurrent transaction execution without race hazards==
+4. **==[underline] Durability==** — ==[box] Ensuring committed transactions survive crashes and power failure==
 
 ---
 
@@ -165,7 +165,7 @@ In this comprehensive essay, we explore the four foundational pillars of ACID en
 ${
   atomicity
     ? atomicity.markdown
-    : 'Atomicity ensures that all statements within a transaction boundary succeed or none do.'
+    : '==[highlight] Atomicity ensures that all statements within a transaction boundary succeed or none do.== If any single statement encounters an error, disk failure, or constraint violation, the entire transaction is rolled back via ==[underline] Write-Ahead Logging (WAL)== and ==[underline] Undo Logs==, leaving the database state completely unaffected.'
 }
 
 ---
@@ -175,7 +175,7 @@ ${
 ${
   consistency
     ? consistency.markdown
-    : 'Consistency guarantees that a transaction transforms the database from one valid state to another.'
+    : '==[highlight] Consistency guarantees that a transaction transforms the database from one valid state to another.== Any data written to the database must be valid according to all defined schema rules, including constraints, cascades, foreign keys, triggers, and any combination thereof.'
 }
 
 ---
@@ -185,7 +185,7 @@ ${
 ${
   isolation
     ? isolation.markdown
-    : 'Isolation ensures that concurrently executing transactions do not interfere with each other.'
+    : '==[highlight] Isolation ensures that concurrently executing transactions do not interfere with each other.== By using ==[underline] Multi-Version Concurrency Control (MVCC)==, ==[underline] Two-Phase Locking (2PL)==, or Snapshot Isolation, databases prevent dirty reads, non-repeatable reads, and ==[box] phantom read race hazards==.'
 }
 
 ---
@@ -195,14 +195,14 @@ ${
 ${
   durability
     ? durability.markdown
-    : 'Durability guarantees that once a transaction has committed, its changes will persist permanently.'
+    : '==[highlight] Durability guarantees that once a transaction has committed, its changes will persist permanently== even in the event of an immediate power outage or operating system crash, achieved via synchronous ==[underline] fsync== to persistent storage media.'
 }
 
 ---
 
 ## Summary: Modern Tradeoffs in ACID Systems
 
-While ACID transactions provide clean mental models for developers, scaling ACID across distributed nodes introduces tradeoffs captured by the PACELC and CAP theorems. Modern distributed databases like Google Spanner, CockroachDB, and TiDB employ atomic clocks, Raft/Paxos consensus, and two-phase commit (2PC) to offer Distributed ACID across geographic regions.
+While ACID transactions provide clean mental models for developers, scaling ACID across distributed nodes introduces tradeoffs captured by the ==[box] PACELC and CAP theorems==. ==[bracket] Modern distributed databases like Google Spanner, CockroachDB, and TiDB employ atomic clocks, Raft/Paxos consensus, and two-phase commit (2PC) to offer Distributed ACID across geographic regions.==
 `;
 
   const wordCount = combinedMarkdown.split(/\s+/).length;

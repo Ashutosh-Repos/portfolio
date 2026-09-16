@@ -1,4 +1,5 @@
 import { db, schema } from './index';
+import { eq } from 'drizzle-orm';
 
 export async function seedSchemaCompleteness() {
   console.log(
@@ -187,12 +188,12 @@ export async function seedSchemaCompleteness() {
       order: 5,
     },
     {
-      name: 'SQL',
-      slug: 'sql',
-      category: 'languages',
+      name: 'MySQL',
+      slug: 'mysql',
+      category: 'databases',
       tier: 'master',
       years: 4,
-      icon: 'sql',
+      icon: 'mysql',
       featured: true,
       order: 6,
     },
@@ -254,7 +255,7 @@ export async function seedSchemaCompleteness() {
       category: 'networking',
       tier: 'master',
       years: 3,
-      icon: 'stream',
+      icon: 'sse',
       featured: true,
       order: 12,
     },
@@ -268,6 +269,16 @@ export async function seedSchemaCompleteness() {
       featured: true,
       order: 13,
     },
+    {
+      name: 'Socket.io',
+      slug: 'socketio',
+      category: 'networking',
+      tier: 'master',
+      years: 3,
+      icon: 'socketio',
+      featured: true,
+      order: 14,
+    },
 
     // Frontend
     {
@@ -278,7 +289,7 @@ export async function seedSchemaCompleteness() {
       years: 4,
       icon: 'react',
       featured: true,
-      order: 14,
+      order: 15,
     },
     {
       name: 'Next.js',
@@ -288,7 +299,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'nextjs',
       featured: true,
-      order: 15,
+      order: 16,
     },
     {
       name: 'Tailwind CSS',
@@ -298,7 +309,7 @@ export async function seedSchemaCompleteness() {
       years: 4,
       icon: 'tailwind',
       featured: true,
-      order: 16,
+      order: 17,
     },
     {
       name: 'HTML5 & CSS3',
@@ -308,7 +319,7 @@ export async function seedSchemaCompleteness() {
       years: 5,
       icon: 'html5',
       featured: false,
-      order: 17,
+      order: 18,
     },
 
     // Databases & Cloud Infra
@@ -320,7 +331,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'postgresql',
       featured: true,
-      order: 18,
+      order: 19,
     },
     {
       name: 'MongoDB',
@@ -330,7 +341,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'mongodb',
       featured: true,
-      order: 19,
+      order: 20,
     },
     {
       name: 'SQLite / libSQL',
@@ -340,7 +351,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'sqlite',
       featured: true,
-      order: 20,
+      order: 21,
     },
     {
       name: 'Prisma ORM',
@@ -350,7 +361,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'prisma',
       featured: false,
-      order: 21,
+      order: 22,
     },
     {
       name: 'Mongoose',
@@ -358,9 +369,9 @@ export async function seedSchemaCompleteness() {
       category: 'databases',
       tier: 'proficient',
       years: 3,
-      icon: 'mongodb',
+      icon: 'mongoose',
       featured: false,
-      order: 22,
+      order: 23,
     },
     {
       name: 'Redis',
@@ -370,7 +381,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'redis',
       featured: true,
-      order: 23,
+      order: 24,
     },
     {
       name: 'NATS JetStream',
@@ -380,7 +391,7 @@ export async function seedSchemaCompleteness() {
       years: 2,
       icon: 'nats',
       featured: true,
-      order: 24,
+      order: 25,
     },
     {
       name: 'S3 Object Storage',
@@ -388,9 +399,9 @@ export async function seedSchemaCompleteness() {
       category: 'cloud_infra',
       tier: 'master',
       years: 3,
-      icon: 'aws',
+      icon: 's3',
       featured: true,
-      order: 25,
+      order: 26,
     },
     {
       name: 'Docker',
@@ -400,7 +411,7 @@ export async function seedSchemaCompleteness() {
       years: 3,
       icon: 'docker',
       featured: true,
-      order: 26,
+      order: 27,
     },
 
     // Tools & AI
@@ -412,7 +423,7 @@ export async function seedSchemaCompleteness() {
       years: 5,
       icon: 'git',
       featured: true,
-      order: 27,
+      order: 28,
     },
     {
       name: 'LLM Integration (OpenAI, Gemini, Claude)',
@@ -422,9 +433,15 @@ export async function seedSchemaCompleteness() {
       years: 2,
       icon: 'ai',
       featured: true,
-      order: 28,
+      order: 29,
     },
   ];
+
+  // Remove legacy SQL and wrong NetworkX rows
+  await db.delete(schema.skill).where(eq(schema.skill.slug, 'sql'));
+  await db.delete(schema.skill).where(eq(schema.skill.id, 'skill-sql'));
+  await db.delete(schema.skill).where(eq(schema.skill.slug, 'networkx'));
+  await db.delete(schema.skill).where(eq(schema.skill.id, 'skill-networkx'));
 
   for (const s of allResumeSkills) {
     await db

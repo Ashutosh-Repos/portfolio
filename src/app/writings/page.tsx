@@ -6,10 +6,21 @@ import { GLASS_OPTICS } from '@/lib/glass-config';
 import { writingService } from '@/platform/modules/writing/writing.service';
 
 export const metadata: Metadata = {
-  title: 'Writings & Essays',
+  title: 'Essays & Reflections — Ashutosh',
   description:
-    'Personal thoughts, essays, reflections on engineering craft, agency, and outcomes by Ashutosh Kumar.',
+    'Personal essays, engineering reflections, agency, and systems thinking written by Ashutosh.',
+  alternates: {
+    canonical: '/writings',
+  },
+  openGraph: {
+    title: 'Essays & Reflections — Ashutosh',
+    description:
+      'Personal essays, engineering reflections, agency, and systems thinking written by Ashutosh.',
+    url: '/writings',
+    siteName: 'Ashutosh',
+  },
 };
+
 
 export default async function WritingsPage() {
   const result = await writingService
@@ -27,12 +38,20 @@ export default async function WritingsPage() {
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 pt-4 pb-20">
-      <Link
-        href="/"
-        className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
-      >
-        &larr; Back to Home
-      </Link>
+      <div className="flex w-full justify-between items-center">
+        <Link
+          href="/"
+          className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
+        >
+          &larr; Back to Home
+        </Link>
+        <Link
+          href="/blogs"
+          className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
+        >
+          Technical Blogs &rarr;
+        </Link>
+      </div>
 
       {/* <Container
         className="p-6 sm:p-8 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
@@ -42,16 +61,16 @@ export default async function WritingsPage() {
       <div className="py-1 px-0.5 flow-root">
         <div className="flex items-baseline justify-between gap-4">
           <h1 className="text-xl md:text-2xl text-foreground mb-3 sm:mb-4">
-            <span className="font-bold">Personal</span>{' '}
-            <span className="text-foreground/50 text-sm">thoughts</span>{' '}
-            <span className="italic text-base font-light">& essays</span>
+            <span className="font-bold">Writing</span>{' '}
+            <span className="text-foreground/50 text-sm">my</span>{' '}
+            <span className="italic text-base font-light">thoughts</span>
           </h1>
           <span className="text-xs font-mono text-foreground/50">
             {essays.length} {essays.length === 1 ? 'essay' : 'essays'}
           </span>
         </div>
 
-        <p className="pt-3 text-sm text-foreground/80">
+        <p className="relative pt-3 text-sm text-foreground/80">
           I write whenever inspiration strikes, which means I&apos;m pretty
           irregular about it. Reflections on engineering philosophy, intentional
           craft, and ambition.
@@ -88,7 +107,9 @@ export default async function WritingsPage() {
 
               {essay.excerpt && (
                 <p className="text-sm text-foreground/70 line-clamp-2 leading-relaxed">
-                  {essay.excerpt}
+                  {essay.excerpt
+                    .replace(/==(\[[^\]]+\]\s*)?/g, '')
+                    .replace(/==/g, '')}
                 </p>
               )}
 

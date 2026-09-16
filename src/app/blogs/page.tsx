@@ -6,10 +6,21 @@ import { GLASS_OPTICS } from '@/lib/glass-config';
 import { blogService } from '@/platform/modules/blogs/blog.service';
 
 export const metadata: Metadata = {
-  title: 'Blogs',
+  title: 'Engineering Blogs & Deep Dives — Ashutosh',
   description:
-    'Technical blog posts, system design essays, distributed data structures, AI engineering, and database internals by Ashutosh Kumar.',
+    'Technical blog posts, system design essays, distributed algorithms, and database internals authored by Ashutosh.',
+  alternates: {
+    canonical: '/blogs',
+  },
+  openGraph: {
+    title: 'Engineering Blogs & Deep Dives — Ashutosh',
+    description:
+      'Technical blog posts, system design essays, distributed algorithms, and database internals authored by Ashutosh.',
+    url: '/blogs',
+    siteName: 'Ashutosh',
+  },
 };
+
 
 export default async function BlogsPage() {
   const result = await blogService
@@ -27,12 +38,20 @@ export default async function BlogsPage() {
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 pt-4">
-      <Link
-        href="/"
-        className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
-      >
-        &larr; Back to Home
-      </Link>
+      <div className="flex w-full justify-between items-center">
+        <Link
+          href="/"
+          className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
+        >
+          &larr; Back to Home
+        </Link>
+        <Link
+          href="/papershelf"
+          className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
+        >
+          Research Papers I'd read &rarr;
+        </Link>
+      </div>
 
       <div className="py-1 px-0.5 flow-root">
         <div className="flex items-baseline justify-between gap-4">
@@ -46,7 +65,7 @@ export default async function BlogsPage() {
           </span>
         </div>
 
-        <p className="pt-3 text-sm text-foreground/80">
+        <p className="relative pt-3 text-sm text-foreground/80">
           Deep dives on systems architecture, distributed data structures,
           low-latency databases, and AI engineering.
         </p>
@@ -82,7 +101,9 @@ export default async function BlogsPage() {
 
               {blog.excerpt && (
                 <p className="text-sm text-foreground/70 line-clamp-2 leading-relaxed">
-                  {blog.excerpt}
+                  {blog.excerpt
+                    .replace(/==(\[[^\]]+\]\s*)?/g, '')
+                    .replace(/==/g, '')}
                 </p>
               )}
 

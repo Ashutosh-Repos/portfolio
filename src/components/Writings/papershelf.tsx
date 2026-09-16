@@ -56,9 +56,9 @@ export const PaperShelf = ({
     <div className="py-1 px-0.5 flow-root">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-foreground">
-          <span className="font-light text-md md:text-lg">Research</span>{' '}
-          <span className="text-foreground/50 text-sm">work</span>{' '}
-          <span className="italic text-base font-light">Papershelf</span>
+          <span className="font-light text-md md:text-lg">Research Papers</span>{' '}
+          <span className="text-foreground/50 text-sm">I've</span>{' '}
+          <span className="italic text-base font-light">Read</span>
         </h2>
         <LinkPreview
           url="/papershelf"
@@ -70,7 +70,7 @@ export const PaperShelf = ({
           View all &rarr;
         </LinkPreview>
       </div>
-      <p className="pt-3 text-sm text-foreground/90 leading-relaxed">
+      <p className="relative pt-3 text-sm text-foreground/90 leading-relaxed">
         Architectural breakdowns and takeaways from foundational systems and AI
         papers.
       </p>

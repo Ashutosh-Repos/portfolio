@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { flushSync } from 'react-dom';
+import { useTheme } from 'next-themes';
 
 import { cn } from '@/lib/utils';
 
@@ -164,10 +165,9 @@ export const AnimatedThemeToggler = ({
   onThemeChange,
   ...props
 }: AnimatedThemeTogglerProps) => {
+  const { setTheme } = useTheme();
   const shape = variant ?? 'circle';
   const isControlled = theme !== undefined;
-  const [internalIsDark, setInternalIsDark] = useState(false);
-  const isDark = isControlled ? theme === 'dark' : internalIsDark;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const isTransitioningRef = useRef(false);
   const activeAnimRef = useRef<Animation | null>(null);
@@ -187,24 +187,6 @@ export const AnimatedThemeToggler = ({
       root.style.removeProperty('--magicui-theme-vt-clip-from');
     };
   }, [cancelAnim]);
-
-  useEffect(() => {
-    if (isControlled) return;
-
-    const updateTheme = () => {
-      setInternalIsDark(document.documentElement.classList.contains('dark'));
-    };
-
-    updateTheme();
-
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
-  }, [isControlled]);
 
   const toggleTheme = useCallback(() => {
     const button = buttonRef.current;
@@ -237,15 +219,17 @@ export const AnimatedThemeToggler = ({
     );
 
     const applyTheme = () => {
-      const newTheme = !isDark;
+      const isCurrentlyDark = isControlled
+        ? theme === 'dark'
+        : document.documentElement.classList.contains('dark');
+      const newTheme = !isCurrentlyDark;
       // Always toggle the class synchronously so the View Transitions API
       // snapshots the new theme inside the startViewTransition callback.
       document.documentElement.classList.toggle('dark');
       if (isControlled) {
         onThemeChange?.(newTheme ? 'dark' : 'light');
       } else {
-        setInternalIsDark(newTheme);
-        localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+        setTheme(newTheme ? 'dark' : 'light');
       }
     };
 
@@ -314,9 +298,10 @@ export const AnimatedThemeToggler = ({
     shape,
     fromCenter,
     duration,
-    isDark,
     isControlled,
+    theme,
     onThemeChange,
+    setTheme,
     cancelAnim,
   ]);
 
@@ -327,14 +312,11 @@ export const AnimatedThemeToggler = ({
       onClick={toggleTheme}
       className={cn(className)}
       aria-label="Toggle theme"
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title="Toggle theme"
       {...props}
     >
-      {isDark ? (
-        <Sun className={cn(lightIconClassName)} />
-      ) : (
-        <Moon className={cn(darkIconClassName)} />
-      )}
+      <Sun className={cn(lightIconClassName, 'hidden dark:block')} />
+      <Moon className={cn(darkIconClassName, 'block dark:hidden')} />
       <span className="sr-only">Toggle theme</span>
     </button>
   );

@@ -60,7 +60,10 @@ export const SkillBubble: React.FC<SkillBubbleProps> = ({
         />
       </Container>
       {showLabel && (
-        <span className="text-xs sm:text-sm text-foreground/60 group-hover:text-foreground transition-colors text-center font-normal truncate max-w-[84px]">
+        <span
+          title={skill.name}
+          className="text-xs sm:text-sm text-foreground/60 group-hover:text-foreground transition-colors text-center font-normal truncate max-w-[84px]"
+        >
           {skill.name.split(' (')[0]}
         </span>
       )}

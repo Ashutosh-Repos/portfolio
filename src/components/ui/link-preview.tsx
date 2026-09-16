@@ -7,7 +7,7 @@ import {
   motion,
   useMotionValue,
   useSpring,
-} from 'motion/react';
+} from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 import { POP_IN_VARIANTS, SPRING_CONFIG } from '@/lib/motion-config';

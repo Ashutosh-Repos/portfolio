@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { About } from '@/components/about/About';
 import { Container } from '@/components/liquid/Container';
 import { Experience } from '@/components/experience/experience';
@@ -10,6 +11,22 @@ import { GLASS_OPTICS } from '@/lib/glass-config';
 import { experienceService } from '@/platform/modules/experience/experience.service';
 import { writingService } from '@/platform/modules/writing/writing.service';
 import { blogService } from '@/platform/modules/blogs/blog.service';
+
+export const metadata: Metadata = {
+  title: 'Ashutosh — Software Engineer & Systems Architect',
+  description:
+    'Official website and portfolio of Ashutosh (aka Intel 8085) — software engineer, open-source creator of Bunly & Tessera, and builder of high-performance distributed systems.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Ashutosh — Software Engineer & Systems Architect',
+    description:
+      'Official website and portfolio of Ashutosh (aka Intel 8085) — software engineer, open-source creator of Bunly & Tessera, and builder of high-performance distributed systems.',
+    url: '/',
+    siteName: 'Ashutosh',
+  },
+};
 
 export default async function Home() {
   const [experiences, blogsResult, essaysResult, papersResult] =
@@ -68,7 +85,7 @@ export default async function Home() {
       <div className="contents min-[890px]:flex min-[890px]:flex-col min-[890px]:col-span-2 min-[890px]:gap-6 min-[890px]:w-full">
         <div className="order-1 min-[890px]:order-0 w-full">
           <Container
-            className="p-6 sm:p-7 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            className="p-6 sm:p-7 rounded-[32px] transition-all duration-300 w-full"
             radius={36}
             optics={GLASS_OPTICS}
           >
@@ -82,7 +99,7 @@ export default async function Home() {
 
         <div className="order-4 min-[890px]:order-0 w-full">
           <Container
-            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            className="p-5 sm:p-6 rounded-[32px] transition-all duration-300 w-full"
             radius={36}
             optics={GLASS_OPTICS}
           >
@@ -92,7 +109,7 @@ export default async function Home() {
 
         <div className="order-5 min-[890px]:order-0 w-full">
           <Container
-            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            className="p-5 sm:p-6 rounded-[32px] transition-all duration-300 w-full"
             radius={36}
             optics={GLASS_OPTICS}
           >
@@ -105,7 +122,7 @@ export default async function Home() {
       <div className="contents min-[890px]:flex min-[890px]:flex-col min-[890px]:col-span-1 min-[890px]:gap-6 min-[890px]:w-full">
         <div className="order-2 min-[890px]:order-0 w-full">
           <Container
-            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            className="p-5 sm:p-6 rounded-[32px] transition-all duration-300 w-full"
             radius={36}
             optics={GLASS_OPTICS}
           >
@@ -117,9 +134,9 @@ export default async function Home() {
           </Container>
         </div>
 
-        <div className="order-4 min-[890px]:order-0 w-full">
+        <div className="order-6 min-[890px]:order-0 w-full">
           <Container
-            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            className="p-5 sm:p-6 rounded-[32px] transition-all duration-300 w-full"
             radius={36}
             optics={GLASS_OPTICS}
           >
@@ -128,9 +145,9 @@ export default async function Home() {
             />
           </Container>
         </div>
-        <div className="order-4 min-[890px]:order-0 w-full">
+        <div className="order-7 min-[890px]:order-0 w-full">
           <Container
-            className="p-5 sm:p-6 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
+            className="p-5 sm:p-6 rounded-[32px] transition-all duration-300 w-full"
             radius={36}
             optics={GLASS_OPTICS}
           >

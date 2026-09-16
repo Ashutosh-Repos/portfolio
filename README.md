@@ -1,68 +1,148 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio v2 — Ashutosh Kumar
 
-## Getting Started
+> A high-performance personal portfolio, digital garden, and engineering showcase featuring physical liquid glass shaders, interactive micro-animations, and developer integrations.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.4-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.8-blue?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 ---
 
-## 🚀 Production Deployment Notes & Reminders
+## ✨ Features
 
-### Dynamic Link Previews (Internal Routes like `/about`)
+- **💧 Physical Liquid Glass Droplets & Shaders**: Custom Signed Distance Field (SDF) normal maps, caustic refraction, convex specular glints, and per-instance mouse displacement physics.
+- **🫧 Interactive Tech Stack Bubbles**: Spherical liquid droplets representing core languages and tools (Go, TypeScript, Rust, Node.js, React, PostgreSQL, etc.) with dynamic cloud link previews.
+- **📄 Resume Viewer & Downloader**: Standalone liquid action bubbles for viewing the PDF in a custom glass lightbox modal and direct one-click downloading.
+- **📊 Real-time Developer Analytics**: Live GitHub activity feed, commit counts, merged PRs, and LeetCode problem-solving statistics.
+- **📚 Writings & Papershelf**: Minimalist essay reader and curated computer science paper repository with markdown formatting.
+- **🖼️ Interactive Pixel Avatar**: Multi-layer avatar with pixel-dissolve transition upon interaction.
+- **🌓 Dynamic Light/Dark Themes**: Persistent theme support with smooth visual mode toggling.
+- **📱 Responsive & Foldable-Ready**: Optimized layouts across ultra-wide monitors down to compact foldable screens (e.g. Samsung Galaxy Z Fold 5).
+- **🚀 Complete SEO Suite**: Dynamic OpenGraph cards (`opengraph-image.tsx`), automated `sitemap.ts`, `robots.ts`, and structured semantic metadata.
 
-This portfolio uses **100% dynamic link previews** powered by the [Microlink](https://microlink.io) cloud screenshot service.
+---
 
-#### 1. Why internal routes (e.g. `/about`) show 404 during local development
+## 🛠️ Tech Stack
 
-- Microlink is a public cloud service on the internet. It **cannot** connect to `http://localhost:3000` on your private machine.
-- For internal relative routes (`/about`), the `LinkPreview` component resolves the URL against the public domain (`process.env.NEXT_PUBLIC_SITE_URL`).
-- During local development, this defaults to the existing live Vercel deployment. If a newly created route (like `/about`) has **not been pushed/deployed** to that live URL yet, the cloud screenshot service captures what is currently live on that domain — which returns 404.
+- **Framework**: [Next.js 16 (Turbopack, App Router)](https://nextjs.org/)
+- **Core**: [React 19](https://react.dev/), [TypeScript 5](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/), CSS Modules, and custom canvas/SVG shaders
+- **Animation & Optics**: [Framer Motion](https://www.framer.com/motion/), [GSAP](https://gsap.com/), [Three.js](https://threejs.org/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Data & Storage**: [Drizzle ORM](https://orm.drizzle.team/), [LibSQL](https://github.com/tursodatabase/libsql)
+- **Package Manager**: [pnpm](https://pnpm.io/)
 
-#### 2. What to do when deploying to Production (e.g. Vercel)
+---
 
-In your production hosting dashboard (e.g., **Vercel Project Settings &rarr; Environment Variables**), configure:
+## 📁 Project Structure
 
-```env
-NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
+```text
+portfolio_v2/
+├── public/                     # Static assets (SVGs, images, Resume.pdf)
+├── scripts/                    # Content sync and data management CLI tools
+├── src/
+│   ├── app/                    # Next.js App Router pages and metadata
+│   │   ├── about/              # Full dedicated about page
+│   │   ├── blogs/              # Blog posts & technical essays
+│   │   ├── contactme/          # Contact details & links
+│   │   ├── myworks/            # Projects showcase
+│   │   ├── papershelf/         # Research paper summaries
+│   │   ├── opengraph-image.tsx # Dynamic OG banner generator
+│   │   ├── robots.ts           # Crawling directives
+│   │   └── sitemap.ts          # Search engine index generator
+│   ├── components/
+│   │   ├── about/              # About me card, TechBubble, ResumeViewer & Modal
+│   │   ├── animate-ui/         # Interactive primitive animation components
+│   │   ├── liquid/             # Liquid container, shader generation & physics
+│   │   ├── navbar/             # Floating navigation bar
+│   │   ├── footer/             # Site footer
+│   │   ├── skills/             # Categorized skill showcases & asset badges
+│   │   └── ui/                 # Reusable UI controls (LinkPreview, PixelTransition)
+│   ├── lib/                    # Utility functions and glass configurations
+│   └── platform/               # Database schemas, seed data & API integrations
+├── .env.example                # Environment variable documentation
+└── package.json                # Dependencies and project scripts
 ```
 
-_(or your custom domain, e.g. `https://ashutoshkumar.dev`)_
+---
 
-#### 3. Result in Production
+## 🚀 Getting Started
 
-Once your code is deployed to Vercel with the `/about` page live:
+### Prerequisites
 
-1. `NEXT_PUBLIC_SITE_URL` points to your live deployment.
-2. Microlink captures the real, rendered `/about` page over the public web.
-3. The hover preview card displays the actual page content with zero hardcoded assets!
+- [Node.js](https://nodejs.org/) (v20.x or higher recommended)
+- [pnpm](https://pnpm.io/) (`npm install -g pnpm`)
+
+### Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/Ashutosh-Repos/portfolio_v2.git
+   cd portfolio_v2
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Configure Environment Variables**:
+   Copy `.env.example` to `.env.local`:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Set `NEXT_PUBLIC_SITE_URL` to your local dev URL or your production domain:
+
+   ```env
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   ```
+
+4. **Run the development server**:
+   ```bash
+   pnpm dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📜 Available Scripts
+
+| Script         | Description                                                  |
+| :------------- | :----------------------------------------------------------- |
+| `pnpm dev`     | Starts the Next.js Turbopack development server on port 3000 |
+| `pnpm build`   | Creates an optimized production build                        |
+| `pnpm start`   | Runs the production build locally                            |
+| `pnpm lint`    | Runs ESLint checks                                           |
+| `pnpm format`  | Formats the codebase using Prettier                          |
+| `pnpm db:push` | Pushes Drizzle database schema migrations                    |
+| `pnpm db:seed` | Seeds local content and platform entries                     |
+
+---
+
+## 🌐 Production Deployment
+
+### Deploying to Vercel
+
+1. Push your repository to GitHub.
+2. Import the repository into [Vercel](https://vercel.com).
+3. Under **Project Settings &rarr; Environment Variables**, configure:
+   ```env
+   NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
+   ```
+4. Deploy! Dynamic link previews powered by Microlink will automatically capture live rendered routes from your production domain.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+Made with ❤️ by [Ashutosh Kumar](https://github.com/Ashutosh-Repos).

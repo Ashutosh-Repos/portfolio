@@ -79,14 +79,14 @@ export function TravelCard({ journey }: TravelCardProps) {
 
         {/* Photo Gallery or Pending Notice */}
         {photos.length > 0 ? (
-          <div className=" border-t border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-3">
+          <div className=" border-t border-black/6 dark:border-white/6 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Camera className="w-4 h-4 text-foreground/50" />
                 <span className="text-xs font-mono font-semibold uppercase tracking-wider text-foreground/60">
                   Photo Gallery
                 </span>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-foreground/[0.06] text-foreground/60">
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-foreground/6 text-foreground/60">
                   {photos.length} {photos.length === 1 ? 'photo' : 'photos'}
                 </span>
               </div>

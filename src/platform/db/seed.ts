@@ -677,6 +677,8 @@ export async function seedDatabase() {
   // 5. Writings & Publications
   // 5a. Technical Blogs (36 Authentic Arpit Bhayani & Bloom Filters)
   await seedAllArpitBlogs();
+  const { enrichAllBlogsInDb } = await import('./enrich-all-blogs');
+  await enrichAllBlogsInDb();
 
   // 5b. Personal Essays (7 Authentic Designerdada Essays)
   await seedAllWritings();

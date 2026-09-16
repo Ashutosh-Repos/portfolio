@@ -6,10 +6,21 @@ import { GLASS_OPTICS } from '@/lib/glass-config';
 import { writingService } from '@/platform/modules/writing/writing.service';
 
 export const metadata: Metadata = {
-  title: 'Research Papershelf',
+  title: 'Research Papershelf — Ashutosh',
   description:
-    'Deep dives and architectural breakdowns of systems, databases, and AI research papers by Ashutosh Kumar.',
+    'Deep dives, reading notes, and architectural breakdowns of influential computer science and systems research papers by Ashutosh.',
+  alternates: {
+    canonical: '/papershelf',
+  },
+  openGraph: {
+    title: 'Research Papershelf — Ashutosh',
+    description:
+      'Deep dives, reading notes, and architectural breakdowns of influential computer science and systems research papers by Ashutosh.',
+    url: '/papershelf',
+    siteName: 'Ashutosh',
+  },
 };
+
 
 export default async function PapershelfPage() {
   const result = await writingService
@@ -27,12 +38,20 @@ export default async function PapershelfPage() {
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 pt-4">
-      <Link
-        href="/"
-        className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
-      >
-        &larr; Back to Home
-      </Link>
+      <div className="flex w-full justify-between items-center">
+        <Link
+          href="/"
+          className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
+        >
+          &larr; Back to Home
+        </Link>
+        <Link
+          href="/writings"
+          className="text-sm font-mono text-foreground/50 hover:text-foreground transition-colors inline-flex items-center gap-2"
+        >
+          Writings &rarr;
+        </Link>
+      </div>
 
       {/* <Container
         className="p-6 sm:p-8 rounded-[32px] bg-[#d5ede6]/20 dark:bg-[#1a3832]/20 transition-all duration-300 w-full"
@@ -42,19 +61,20 @@ export default async function PapershelfPage() {
       <div className="py-1 px-0.5 flow-root">
         <div className="flex items-baseline justify-between gap-4">
           <h1 className="text-xl md:text-2xl text-foreground mb-3 sm:mb-4">
-            <span className="font-bold">Research</span>{' '}
-            <span className="text-foreground/50 text-sm">paper</span>{' '}
-            <span className="italic text-base font-light">shelf</span>
+            <span className="font-bold">Research Paper</span>{' '}
+            <span className="text-foreground/50 text-sm">I'd</span>{' '}
+            <span className="italic text-base font-light">Read</span>
           </h1>
           <span className="text-xs text-foreground/50">
             {papers.length} {papers.length === 1 ? 'paper' : 'papers'}
           </span>
         </div>
 
-        <p className="pt-3 text-sm text-foreground/80">
+        <p className="relative pt-3 text-sm text-foreground/80">
           I read one paper every week around various topics that interests me
           and here are some of them that I found amusing categorized by topics.
-          Here's the process I follow to read, understand, and remember a paper.
+          Here&apos;s the process I follow to read, understand, and remember a
+          paper.
         </p>
 
         <ul className="pt-8 flex flex-col gap-6">
@@ -88,7 +108,9 @@ export default async function PapershelfPage() {
 
               {paper.excerpt && (
                 <p className="text-sm text-foreground/70 line-clamp-2 leading-relaxed">
-                  {paper.excerpt}
+                  {paper.excerpt
+                    .replace(/==(\[[^\]]+\]\s*)?/g, '')
+                    .replace(/==/g, '')}
                 </p>
               )}
 

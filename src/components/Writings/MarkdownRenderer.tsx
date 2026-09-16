@@ -1,22 +1,89 @@
-import React from 'react';
+'use client';
+
+import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { CodeBlock } from './CodeBlock';
+import { Highlighter } from '@/components/ui/highlighter';
+import { cn } from '@/lib/utils';
 
 interface MarkdownRendererProps {
   content: string;
+  className?: string;
 }
 
-export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
+/**
+ * Preprocesses markdown to convert highlight syntax into semantic <mark> tags:
+ * - ==highlighted text== -> <mark data-action="highlight">highlighted text</mark>
+ * - ==[action] text== -> <mark data-action="action">text</mark> (e.g. underline, circle, box, bracket)
+ * - ==[action:color] text== -> <mark data-action="action" data-color="color">text</mark>
+ * Ignores content inside code blocks and inline backticks.
+ */
+function preprocessMarkdownHighlights(content: string): string {
+  if (!content) return '';
+  const parts = content.split(/(```[\s\S]*?```|`[^`\n]+`)/g);
+  return parts
+    .map((part) => {
+      if (part.startsWith('`')) return part;
+      return part
+        .replace(
+          /(?<!=)==\[([a-z-]+)(?::([^\]]+))?\]\s*((?:(?!\n\n)[^=])+?)==/gi,
+          (_, action, color, text) => {
+            const colorAttr = color ? ` data-color="${color.trim()}"` : '';
+            return `<mark data-action="${action.trim()}"${colorAttr}>${text.trim()}</mark>`;
+          },
+        )
+        .replace(
+          /(?<!=)==((?:(?!\n\n)[^=])+?)==/g,
+          '<mark data-action="highlight">$1</mark>',
+        );
+    })
+    .join('');
+}
+
+export const MarkdownRenderer = ({
+  content,
+  className,
+}: MarkdownRendererProps) => {
+  const processedContent = useMemo(
+    () => preprocessMarkdownHighlights(content),
+    [content],
+  );
+
   return (
-    <div className="markdown-body flex flex-col gap-5 text-foreground/85 leading-relaxed text-base">
+    <div
+      className={cn(
+        'markdown-body flex flex-col gap-5 text-foreground/85 leading-relaxed text-base',
+        className,
+      )}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
+          // Semantic rough-notation highlighter
+          mark({ children, ...props }) {
+            const anyProps = props as Record<string, any>;
+            const action =
+              anyProps['data-action'] || anyProps.action || 'highlight';
+            const color = anyProps['data-color'] || anyProps.color;
+            return (
+              <Highlighter
+                action={action}
+                color={color}
+                isView={false}
+                multiline={true}
+                className="font-medium text-foreground inline-block"
+              >
+                {children}
+              </Highlighter>
+            );
+          },
           // Headings with clean anchor styling
           h1({ children }) {
             return (
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground pt-4 pb-1">
+              <h1 className="relative text-2xl sm:text-3xl font-bold tracking-tight text-foreground pt-4 pb-1">
                 {children}
               </h1>
             );
@@ -33,14 +100,14 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
             return (
               <h2
                 id={id}
-                className="group text-xl sm:text-2xl font-bold tracking-tight text-foreground pt-6 pb-2 border-b border-black/[0.06] dark:border-white/[0.06] flex items-baseline gap-2 scroll-mt-20"
+                className="relative group text-xl sm:text-2xl font-bold tracking-tight text-foreground pt-6 pb-2 border-b border-black/6 dark:border-white/6 flex items-baseline gap-2 scroll-mt-20"
               >
                 <span>{children}</span>
                 {id && (
                   <a
                     href={`#${id}`}
                     aria-label={`Link to ${children}`}
-                    className="opacity-0 group-hover:opacity-40 hover:!opacity-100 text-foreground text-sm font-mono transition-opacity"
+                    className="opacity-0 group-hover:opacity-40 hover:opacity-100! text-foreground text-sm font-mono transition-opacity"
                   >
                     #
                   </a>
@@ -50,14 +117,14 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           },
           h3({ children }) {
             return (
-              <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground pt-4 pb-1">
+              <h3 className="relative text-lg sm:text-xl font-semibold tracking-tight text-foreground pt-4 pb-1">
                 {children}
               </h3>
             );
           },
           h4({ children }) {
             return (
-              <h4 className="text-base sm:text-lg font-semibold tracking-tight text-foreground pt-2">
+              <h4 className="relative text-base sm:text-lg font-semibold tracking-tight text-foreground pt-2">
                 {children}
               </h4>
             );
@@ -66,7 +133,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           // Paragraphs
           p({ children }) {
             return (
-              <p className="leading-relaxed text-foreground/85 text-base sm:text-[17px]">
+              <p className="relative leading-relaxed text-foreground/85 text-base sm:text-[17px]">
                 {children}
               </p>
             );
@@ -89,7 +156,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           // Blockquotes matching Arpit Bhayani & liquid glass palette
           blockquote({ children }) {
             return (
-              <blockquote className="my-4 border-l-2 border-emerald-500/70 pl-4 py-2 bg-emerald-500/[0.04] rounded-r-xl italic text-foreground/90 text-base sm:text-[17px]">
+              <blockquote className="relative my-4 border-l-2 border-emerald-500/70 pl-4 py-2 bg-emerald-500/4 rounded-r-xl italic text-foreground/90 text-base sm:text-[17px]">
                 {children}
               </blockquote>
             );
@@ -111,7 +178,9 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
             );
           },
           li({ children }) {
-            return <li className="leading-relaxed pl-1">{children}</li>;
+            return (
+              <li className="relative leading-relaxed pl-1">{children}</li>
+            );
           },
 
           // Links
@@ -152,8 +221,8 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           // Tables
           table({ children }) {
             return (
-              <div className="overflow-x-auto my-6 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-foreground/[0.02]">
-                <table className="w-full text-left text-sm font-mono divide-y divide-black/[0.08] dark:divide-white/[0.08]">
+              <div className="overflow-x-auto my-6 rounded-2xl border border-black/8 dark:border-white/8 bg-foreground/2">
+                <table className="w-full text-left text-sm font-mono divide-y divide-black/8 dark:divide-white/8">
                   {children}
                 </table>
               </div>
@@ -161,35 +230,35 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           },
           thead({ children }) {
             return (
-              <thead className="bg-foreground/[0.04] text-foreground font-semibold">
+              <thead className="bg-foreground/4 text-foreground font-semibold">
                 {children}
               </thead>
             );
           },
           tbody({ children }) {
             return (
-              <tbody className="divide-y divide-black/[0.04] dark:divide-white/[0.04]">
+              <tbody className="divide-y divide-black/4 dark:divide-white/4">
                 {children}
               </tbody>
             );
           },
           tr({ children }) {
             return (
-              <tr className="hover:bg-foreground/[0.02] transition-colors">
+              <tr className="hover:bg-foreground/2 transition-colors">
                 {children}
               </tr>
             );
           },
           th({ children }) {
             return (
-              <th className="px-4 py-3 text-xs uppercase tracking-wider font-semibold">
+              <th className="relative px-4 py-3 text-xs uppercase tracking-wider font-semibold">
                 {children}
               </th>
             );
           },
           td({ children }) {
             return (
-              <td className="px-4 py-3 text-xs sm:text-sm text-foreground/80">
+              <td className="relative px-4 py-3 text-xs sm:text-sm text-foreground/80">
                 {children}
               </td>
             );
@@ -203,7 +272,7 @@ export const MarkdownRenderer = ({ content }: MarkdownRendererProps) => {
           },
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
