@@ -19,7 +19,7 @@ import {
 } from '@/components/animate-ui/primitives/animate/scroll-progress';
 
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ashutoshram.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -103,6 +103,9 @@ export const metadata: Metadata = {
     title: 'Ashutosh — Software Engineer & Systems Architect',
     description:
       'Official portfolio and personal website of Ashutosh (aka Intel 8085) — software engineer, open-source creator of Bunly & Tessera, and builder of distributed systems.',
+  },
+  verification: {
+    google: 'google8fa01e5c25286838',
   },
 };
 
